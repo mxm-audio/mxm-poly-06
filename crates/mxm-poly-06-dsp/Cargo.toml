@@ -1,0 +1,31 @@
+[package]
+name = "mxm-poly-06-dsp"
+description = "DSP for mxm-poly-06, framework-free and unit-testable"
+version.workspace = true
+edition.workspace = true
+# One runtime dependency, itself dependency-free and at this same floor: the collection's shared
+# routing (`crates/mxm-modulation`). Genuinely portable, so it does NOT inherit the 1.95 GUI floor.
+# The dev-dependency below is not in the shipped graph.
+rust-version = "1.87"
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[dependencies]
+mxm-modulation.workspace = true
+
+[features]
+# `src/conformance.rs`: this instrument's routing as the modulation standard checks it. Enable it
+# only from `[dev-dependencies]` — the plugin's tests hold its route readings to it — so no shipped
+# graph carries it.
+conformance = ["mxm-modulation/conformance"]
+
+# Measurement rulers for the tests only. Zero dependencies at this same floor, so nothing moves.
+[dev-dependencies]
+mxm-measure.workspace = true
+# The modulation standard's checks, for this crate's own tests (`src/conformance.rs`).
+mxm-modulation = { workspace = true, features = ["conformance"] }
+# Listening demos write through the collection's encoder and their tests read back through its
+# decoder. Test-only edges, so neither is in the shipped graph.
+mxm-audio-file.workspace = true
+mxm-audio-file-decode.workspace = true

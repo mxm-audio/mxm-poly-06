@@ -1,0 +1,458 @@
+{
+  "schema_version": 1,
+  "plugin": "dk.mxm.mxm-poly-06",
+  "name": "Sub kick",
+  "category": "percussion",
+  "_comment": "`v` is the value and is authoritative. `text` is this plugin's own formatting of it, kept so the file can be read, and is never loaded.",
+  "params": {
+    "attack": {
+      "v": 0.0,
+      "text": "2 ms"
+    },
+    "bendrange": {
+      "v": 0.083333336,
+      "text": "2 st"
+    },
+    "chorus": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "cutoff": {
+      "v": 0.3,
+      "text": "181.8 Hz"
+    },
+    "decay": {
+      "v": 0.3,
+      "text": "99 ms"
+    },
+    "hpf": {
+      "v": 0.0,
+      "text": "Boost"
+    },
+    "keyassign": {
+      "v": 0.0,
+      "text": "Poly 1"
+    },
+    "level": {
+      "v": 0.9551866,
+      "text": "-2.0 dB"
+    },
+    "lfodelay": {
+      "v": 0.0,
+      "text": "0 ms"
+    },
+    "lfomod": {
+      "v": 0.5,
+      "text": "50 %"
+    },
+    "lforate": {
+      "v": 0.5275852,
+      "text": "5.00 Hz"
+    },
+    "lfosync": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_amp_bend": {
+      "v": 0.5,
+      "text": "+0 %"
+    },
+    "mod_amp_bendon": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_amp_env": {
+      "v": 0.5,
+      "text": "+0 %"
+    },
+    "mod_amp_envon": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_amp_key": {
+      "v": 0.5,
+      "text": "+0 %/oct"
+    },
+    "mod_amp_keyon": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_amp_lfo": {
+      "v": 0.5,
+      "text": "+0 %"
+    },
+    "mod_amp_lfoon": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_amp_noise": {
+      "v": 0.5,
+      "text": "+0 %"
+    },
+    "mod_amp_noiseon": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_amp_press": {
+      "v": 0.5,
+      "text": "+0 %"
+    },
+    "mod_amp_presson": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_amp_pulse": {
+      "v": 0.5,
+      "text": "+0 %"
+    },
+    "mod_amp_pulseon": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_amp_saw": {
+      "v": 0.5,
+      "text": "+0 %"
+    },
+    "mod_amp_sawon": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_amp_sub": {
+      "v": 0.5,
+      "text": "+0 %"
+    },
+    "mod_amp_subon": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_amp_vel": {
+      "v": 0.5,
+      "text": "+0 %"
+    },
+    "mod_amp_velon": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_amp_wheel": {
+      "v": 0.5,
+      "text": "+0 %"
+    },
+    "mod_amp_wheelon": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_cutoff_bend": {
+      "v": 0.5,
+      "text": "+0.00 oct"
+    },
+    "mod_cutoff_bendon": {
+      "v": 1.0,
+      "text": "On"
+    },
+    "mod_cutoff_env": {
+      "v": 0.75,
+      "text": "+3.50 oct"
+    },
+    "mod_cutoff_envon": {
+      "v": 1.0,
+      "text": "On"
+    },
+    "mod_cutoff_key": {
+      "v": 0.5,
+      "text": "+0.00 oct/oct"
+    },
+    "mod_cutoff_keyon": {
+      "v": 1.0,
+      "text": "On"
+    },
+    "mod_cutoff_lfo": {
+      "v": 0.5,
+      "text": "+0.00 oct"
+    },
+    "mod_cutoff_lfoon": {
+      "v": 1.0,
+      "text": "On"
+    },
+    "mod_cutoff_noise": {
+      "v": 0.5,
+      "text": "+0.00 oct"
+    },
+    "mod_cutoff_noiseon": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_cutoff_press": {
+      "v": 0.5,
+      "text": "+0.00 oct"
+    },
+    "mod_cutoff_presson": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_cutoff_pulse": {
+      "v": 0.5,
+      "text": "+0.00 oct"
+    },
+    "mod_cutoff_pulseon": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_cutoff_saw": {
+      "v": 0.5,
+      "text": "+0.00 oct"
+    },
+    "mod_cutoff_sawon": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_cutoff_sub": {
+      "v": 0.5,
+      "text": "+0.00 oct"
+    },
+    "mod_cutoff_subon": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_cutoff_vel": {
+      "v": 0.5,
+      "text": "+0.00 oct"
+    },
+    "mod_cutoff_velon": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_cutoff_wheel": {
+      "v": 0.5,
+      "text": "+0.00 oct"
+    },
+    "mod_cutoff_wheelon": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_pitch_bend": {
+      "v": 0.5,
+      "text": "+0.00 st"
+    },
+    "mod_pitch_bendon": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_pitch_env": {
+      "v": 0.5,
+      "text": "+0.00 st"
+    },
+    "mod_pitch_envon": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_pitch_key": {
+      "v": 0.5,
+      "text": "+0.00 st/oct"
+    },
+    "mod_pitch_keyon": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_pitch_lfo": {
+      "v": 0.5,
+      "text": "+0.00 st"
+    },
+    "mod_pitch_lfoon": {
+      "v": 1.0,
+      "text": "On"
+    },
+    "mod_pitch_noise": {
+      "v": 0.5,
+      "text": "+0.00 st"
+    },
+    "mod_pitch_noiseon": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_pitch_press": {
+      "v": 0.5,
+      "text": "+0.00 st"
+    },
+    "mod_pitch_presson": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_pitch_pulse": {
+      "v": 0.5,
+      "text": "+0.00 st"
+    },
+    "mod_pitch_pulseon": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_pitch_saw": {
+      "v": 0.5,
+      "text": "+0.00 st"
+    },
+    "mod_pitch_sawon": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_pitch_sub": {
+      "v": 0.5,
+      "text": "+0.00 st"
+    },
+    "mod_pitch_subon": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_pitch_vel": {
+      "v": 0.5,
+      "text": "+0.00 st"
+    },
+    "mod_pitch_velon": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_pitch_wheel": {
+      "v": 0.5,
+      "text": "+0.00 st"
+    },
+    "mod_pitch_wheelon": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_width_bend": {
+      "v": 0.5,
+      "text": "+0 %"
+    },
+    "mod_width_bendon": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_width_env": {
+      "v": 0.5,
+      "text": "+0 %"
+    },
+    "mod_width_envon": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_width_key": {
+      "v": 0.5,
+      "text": "+0 %/oct"
+    },
+    "mod_width_keyon": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_width_lfo": {
+      "v": 0.5,
+      "text": "+0 %"
+    },
+    "mod_width_lfoon": {
+      "v": 1.0,
+      "text": "On"
+    },
+    "mod_width_noise": {
+      "v": 0.5,
+      "text": "+0 %"
+    },
+    "mod_width_noiseon": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_width_press": {
+      "v": 0.5,
+      "text": "+0 %"
+    },
+    "mod_width_presson": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_width_pulse": {
+      "v": 0.5,
+      "text": "+0 %"
+    },
+    "mod_width_pulseon": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_width_saw": {
+      "v": 0.5,
+      "text": "+0 %"
+    },
+    "mod_width_sawon": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_width_sub": {
+      "v": 0.5,
+      "text": "+0 %"
+    },
+    "mod_width_subon": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_width_vel": {
+      "v": 0.5,
+      "text": "+0 %"
+    },
+    "mod_width_velon": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "mod_width_wheel": {
+      "v": 0.5,
+      "text": "+0 %"
+    },
+    "mod_width_wheelon": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "noise": {
+      "v": 0.0,
+      "text": "0 %"
+    },
+    "portamento": {
+      "v": 0.0,
+      "text": "0 ms"
+    },
+    "pulse": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "pulsewidth": {
+      "v": 0.5,
+      "text": "50 %"
+    },
+    "range": {
+      "v": 0.0,
+      "text": "16'"
+    },
+    "release": {
+      "v": 0.25,
+      "text": "48 ms"
+    },
+    "resonance": {
+      "v": 0.0,
+      "text": "0 %"
+    },
+    "saw": {
+      "v": 0.0,
+      "text": "Off"
+    },
+    "sub": {
+      "v": 1.0,
+      "text": "100 %"
+    },
+    "sustain": {
+      "v": 0.0,
+      "text": "0 %"
+    },
+    "vcamode": {
+      "v": 0.0,
+      "text": "Envelope"
+    },
+    "volume": {
+      "v": 0.87145656,
+      "text": "-6.0 dB"
+    }
+  },
+  "state": null
+}

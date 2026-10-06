@@ -1,0 +1,20 @@
+[package]
+name = "mxm-poly-06-host-tests"
+description = "mxm-poly-06 hosted by MXM Player: behaviour and golden audio through the real host, against its release bundle. The slow tier: `cargo test -p mxm-poly-06` never builds the player."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+publish = false
+
+[lib]
+# The tests are in `tests/`; the library is empty and not test-built.
+test = false
+doctest = false
+
+[dev-dependencies]
+mxm-player.workspace = true
+mxm-player-harness.workspace = true
+mxm-measure.workspace = true

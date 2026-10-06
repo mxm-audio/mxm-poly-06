@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "_comment": [
+    "Which of mxm-poly-06's parameters fill the collection's control roles.",
+    "Roles come from docs/MXM_CONTROL_MAP.md, which is normative; parameters are named by",
+    "their permanent string id, never by display name.",
+    "",
+    "THE HPF, THE ENVELOPE POLARITY AND THE CHORUS ARE DELIBERATELY ABSENT, and the chorus is",
+    "the one control a player would want most. The collection standard is compiled into the",
+    "player, and an instrument map naming a role the player's standard does not declare is",
+    "refused WHOLE - not just that entry. So claiming `filter.hpf`, `filter_env.polarity` or",
+    "`fx.chorus` would cost this instrument every mapping below on any player built before those",
+    "roles existed. All three stay reachable from the panel, from host automation, and from a",
+    "host's per-step modulation.",
+    "",
+    "The three roles now exist in the standard. This file claims them once an unknown role is",
+    "inert rather than fatal - see docs/MXM_CONTROL_MAP.md section 9.",
+    "",
+    "The saw and pulse switches fill mixer.src1 and mixer.src2, as mxm-mono-01's saw and pulse",
+    "LEVELS do: on a machine with switches, the switch is the source's level. A controller knob",
+    "below half is off and above half is on.",
+    "",
+    "The bender's range, the wheel's reach and the master volume are deliberately off the map:",
+    "set-once controls, not things to reach for on a knob. The patch's Level fills voice.output.",
+    "",
+    "The machine's modulation is routing: each depth role names a route amount the init patch",
+    "wires, so no knob is dead on a fresh instance. The PWM source switch retired with the",
+    "conversion, and osc1.pwm_source with it."
+  ],
+  "instruments": [
+    {
+      "clap_id": "dk.mxm.mxm-poly-06",
+      "name": "mxm-poly-06",
+      "params": {
+        "osc1.range": "range",
+        "osc1.pulse_width": "pulsewidth",
+        "osc1.pwm_depth": "mod_width_lfo",
+
+        "mixer.src1": "saw",
+        "mixer.src2": "pulse",
+        "mixer.sub_level": "sub",
+        "mixer.noise": "noise",
+
+        "filter.cutoff": "cutoff",
+        "filter.resonance": "resonance",
+        "filter.env_amount": "mod_cutoff_env",
+        "filter.key_track": "mod_cutoff_key",
+        "filter.lfo_amount": "mod_cutoff_lfo",
+
+        "amp_env.attack": "attack",
+        "amp_env.decay": "decay",
+        "amp_env.sustain": "sustain",
+        "amp_env.release": "release",
+
+        "lfo1.rate": "lforate",
+        "lfo1.to_pitch": "mod_pitch_lfo",
+        "lfo1.to_filter": "mod_cutoff_lfo",
+        "lfo1.delay": "lfodelay",
+
+        "voice.glide": "portamento",
+        "voice.note_priority": "keyassign",
+        "voice.vca_source": "vcamode",
+        "voice.output": "level"
+      }
+    }
+  ]
+}

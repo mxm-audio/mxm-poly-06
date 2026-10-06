@@ -1,0 +1,48 @@
+[package]
+name = "mxm-poly-06"
+description = "Six-voice polysynth with a built-in chorus, architecture inspired by the JUNO-106"
+version.workspace = true
+edition.workspace = true
+# The editor pulls in egui, which declares 1.95. `mxm-poly-06-dsp` stays at 1.87 and must not be
+# dragged up with it - the editor depends on the DSP, never the reverse.
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[lib]
+# `lib` as well as `cdylib`: the shipped artifact is the `cdylib`. The `lib` is what would let an
+# `apps/mxm-poly-06-standalone` link the plugin later; it adds no dependencies and changes nothing
+# about the bundle. **Do not enable nice-plug's `standalone` feature here** - it pulls in cpal and
+# JACK, and Cargo's feature unification would put them in the shipped `.clap`.
+crate-type = ["cdylib", "lib"]
+
+[dependencies]
+nice-plug.workspace = true
+nice-plug-egui.workspace = true
+mxm-ui.workspace = true
+mxm-preset.workspace = true
+mxm-tempo.workspace = true
+egui.workspace = true
+mxm-poly-06-dsp.workspace = true
+mxm-modulation-params.workspace = true
+
+# Presets, the same three the other two plugins carry and for the same reasons: a preset file is
+# **user-editable**, so it will arrive malformed, and hand-rolled parsing of hand-edited text is
+# where the bugs live. `dirs` because user presets live under the config directory — a plugin is
+# never told the path its `.clap` was loaded from.
+#
+# All three pin exactly and are already resolved in the workspace lock file, so nothing new enters it.
+
+[dev-dependencies]
+# The collection's shared headless checks (`crates/mxm-plugin-test`).
+mxm-plugin-test.workspace = true
+# `wgpu` renders a frame to pixels for the layout-tree review pictures
+# (`mxm_plugin_test::tree_checks`, `editor::tests::tree_pictures`). Test-only: nothing here reaches
+# the bundle.
+egui_kittest = { version = "=0.36.1", features = ["wgpu"] }
+image = { version = "=0.25.9", default-features = false, features = ["png"] }
+# The modulation standard's checks (`mxm_plugin_test::routing_checks`): the route parameters are
+# held to the DSP's own declaration. Test-only features, so the bundle carries neither.
+mxm-modulation = { workspace = true, features = ["conformance"] }
+mxm-poly-06-dsp = { workspace = true, features = ["conformance"] }
