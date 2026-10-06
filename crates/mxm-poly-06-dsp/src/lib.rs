@@ -22,9 +22,10 @@
 //! is the effect the machine shipped with, kept a module with a plain-values API so a standalone
 //! version is later a move rather than a rewrite.
 //!
-//! `flush` and `Rng` below are **the third honest copy** of `crates/mxm-mono-01-dsp`'s, kept
-//! byte-identical on purpose: the collection extracts shared DSP from the evidence of copies that
-//! proved identical, and this crate's AGENTS.md records which of its modules did.
+//! `flush` and `Rng` below are **the third honest copy** of mxm-mono-01's
+//! `crates/mxm-mono-01-dsp`'s, kept byte-identical on purpose: the collection extracts shared DSP
+//! from the evidence of copies that proved identical, and this crate's NOTES.md records which of
+//! its modules did.
 
 pub mod chorus;
 #[cfg(any(test, feature = "conformance"))]

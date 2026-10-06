@@ -2,9 +2,9 @@
 //!
 //! Two here; the third — output level with clip indication — is the app bar's, per §3.1.
 //!
-//! Both draw with theme tokens and never with a literal colour: `crates/ui/AGENTS.md` is explicit
-//! that a consumer needing a value the theme does not expose adds the token there rather than the
-//! literal here.
+//! Both draw with theme tokens and never with a literal colour: mxm-kit's `crates/ui/AGENTS.md` is
+//! explicit that a consumer needing a value the theme does not expose adds the token there rather
+//! than the literal here.
 
 use egui::{Color32, Pos2, Rect, Sense, Stroke, Ui, Vec2, pos2};
 use mxm_poly_06_dsp::filter::K_MAX;

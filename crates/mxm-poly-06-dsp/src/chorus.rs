@@ -107,7 +107,8 @@ pub const DELAY_DEPTH_MS: f32 = 1.2;
 pub const DEPTH_MAX_MS: f32 = 2.0 * DELAY_DEPTH_MS;
 /// How long a moving rate or depth takes to reach a new value. **Chosen**: a depth step moves the
 /// delay in one sample, which is a pitch click; twenty milliseconds is the middle of the range
-/// `plugins/AGENTS.md` measured as neither steppy nor smeared. `set_mode` does not use it.
+/// mxm-kit's `docs/plugin-conventions.md` (*Smooth signals, not coefficients*) measured as neither
+/// steppy nor smeared. `set_mode` does not use it.
 pub const CONTROL_SLEW_S: f32 = 0.02;
 
 /// The anti-alias one-pole before the BBD: `R122 10 kΩ, C52 0.0022 µF`, computed.

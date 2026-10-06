@@ -72,14 +72,16 @@ it differs from the first sample.
 - **The envelope's decay can stall one ulp above its sustain threshold in `f32`.** With decay 0.4 s
   and sustain 0.8 the per-sample step falls under half an ulp of the level, and the stage never
   reaches `Sustain`. Inaudible, and it left the stage wrong. Fixed here by also switching when the
-  step stopped moving the level; **`crates/mxm-mono-01-dsp/src/envelope.rs` has the same stall.**
+  step stopped moving the level; **mxm-mono-01's `crates/mxm-mono-01-dsp/src/envelope.rs` has the same
+  stall.**
 - **The portamento lag is carried as its remaining distance**, `glide_offset`, by the same
   mechanism's lesson. `glide = note + (glide − note) × coef` stopped moving once the step was under
   half an ulp of the note, so after a glide the pitch rested short of the key until the next note —
   1.8 cents at 0.1 s, 18 at 1 s and 37 at the 2 s maximum at 48 kHz, twice that at 96 kHz. Found by
   the modulation standard's Key check and fixed on 2026-09-26 at the owner's request, here and in
-  the three other instruments with the same form (`crates/mxm-mono-01-dsp/AGENTS.md`, *Numeric
-  contracts*); `a_glide_lands_exactly_on_its_note` holds it. Four factory designs in UNISON — whose
+  the three other instruments with the same form (mxm-mono-01's
+  `crates/mxm-mono-01-dsp/AGENTS.md`, *Numeric contracts*); `a_glide_lands_exactly_on_its_note`
+  holds it. Four factory designs in UNISON — whose
   chord glides every voice — render differently by the glide's rounding.
 
 ## What is chosen, not measured
@@ -121,13 +123,14 @@ Everything else numeric in `src/` is a derived quantity or a test tolerance. Non
 | `dco.rs` | The mixer's `0.5` headroom | mono-01's: four sources at full level must not slam the saturator |
 | `chorus.rs` | `NOISE_SNAP` — where a fading noise gain becomes exactly zero | 1e-7, about −140 dBFS |
 | `chorus.rs` | `DEPTH_MAX_MS` — the widest swing a standalone may ask for, and the line's size | exactly twice the circuit's depth, so the circuit is a linear control's midpoint and a half is exact in `f32` |
-| `chorus.rs` | `CONTROL_SLEW_S` — the glide for a moving rate or depth | 20 ms, the middle of the range `plugins/AGENTS.md` measured; `set_mode` does not glide |
+| `chorus.rs` | `CONTROL_SLEW_S` — the glide for a moving rate or depth | 20 ms, the middle of the range mxm-kit's `docs/plugin-conventions.md` measured (*Smooth signals, not coefficients*); `set_mode` does not glide |
 | `chorus.rs` | `PRE_FILTER_HZ`, `RECON_1`, `RECON_2`, `WET_GAIN` | **Computed** from the schematic's component values, not chosen — see the effects reference |
 
 ## The chorus is a module with a plain-values API, and it serves two products
 
-Mono in, stereo out; it knows nothing about voices. `plugins/mxm-chorus-06` **depends on this crate
-in place** and calls this module—no move or copy—because the chorus support code also serves the
+Mono in, stereo out; it knows nothing about voices. mxm-chorus-06's `plugins/mxm-chorus-06` **depends
+on this crate** — in place until the split, at a tag of this repository since 2026-10-06 — and calls
+this module—no move or copy—because the chorus support code also serves the
 instrument voice.
 
 **Depth, mix and noise are fixed in this instrument and are inputs in the module** — the owner's
@@ -221,7 +224,8 @@ that at depth they compute the retired sliders' expressions to the bit, and
 which has none of its own and holds this same 1.87 floor — the routing conversion added it, and the
 MSRV override still rests on the shipped graph staying that small.
 `cargo tree -p mxm-poly-06-dsp -e normal` shows that crate and nothing else;
-`plugins/mxm-chorus-06`, which depends on this crate in place, inherits it.
+mxm-chorus-06's `plugins/mxm-chorus-06`, which depends on this crate (in place until the split, at a
+tag since 2026-10-06), inherits it.
 
 `[dev-dependencies]` holds **`mxm-measure`**, the collection's measurement rulers — zero dependencies
 at this same floor, reaching only tests and `examples/`, never a shipped `.clap`.
@@ -232,7 +236,7 @@ feature of the same name. Only `[dev-dependencies]` enable either — this crate
 `mxm-modulation` entry there, and the plugin's — and resolver 3 keeps a dev-dependency's features
 out of a shipped build: `cargo tree -p mxm-poly-06 -e normal -f "{p} {f}"` shows `mxm-modulation`
 with no features.
-[`../mxm-measure/AGENTS.md`](https://github.com/mxm-audio/mxm-kit/blob/main/crates/mxm-measure/AGENTS.md)'s
+mxm-kit's [`crates/mxm-measure/AGENTS.md`](https://github.com/mxm-audio/mxm-kit/blob/main/crates/mxm-measure/AGENTS.md)'s
 verification section checks that rather than asserting it.
 
 It also holds **`mxm-audio-file`**, which writes the listening demo, and **`mxm-audio-file-decode`**,
@@ -333,4 +337,6 @@ reference recordings**, and it has **not been run**. Fidelity is UNVERIFIED.
 research has no shape for either and an unmarked guess is worse than a gap.
 
 Linux and macOS are unverified — there is no CI (root *Windows, Linux and macOS*) — and the
-development machine is Windows.
+development machine is Windows. *Since the split (2026-10-06):* CI builds and tests Windows, macOS
+and Linux on `v*` release tags or when started by hand, and Linux is checked in WSL before a push
+(root `AGENTS.md`, *Verification*).

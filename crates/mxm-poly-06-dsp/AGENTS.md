@@ -11,8 +11,9 @@ schematic's order. Framework-free, so the whole thing is testable with `cargo te
 
 **The instrument is a six-voice polysynth with a built-in chorus**, architecture inspired by the
 Roland JUNO-106. `research:instruments/juno-106.md` and `research:effects/juno-chorus.md` are the
-research it rests on; `plans/plan-mxm-poly-06.md` is the completed implementation record. Rationale,
-measurements and full test lists behind the rules below: [NOTES.md](NOTES.md).
+research it rests on; `plans/plan-mxm-poly-06.md` (in the private archive) is the completed
+implementation record. Rationale, measurements and full test lists behind the rules below:
+[NOTES.md](NOTES.md).
 
 # Ownership
 
@@ -62,7 +63,7 @@ whole table; the regression-prone rules ([NOTES.md § The press ledger](NOTES.md
 - **Two states of one recursion go to zero together** (`chorus.rs`, `Biquad::process`), or a biquad
   limit-cycles at the flush threshold ([NOTES.md § Two reusable exact-silence rules](NOTES.md#two-reusable-exact-silence-rules)).
 - **The envelope switches stage when the step stopped moving the level**, or decay stalls one ulp
-  above sustain. `crates/mxm-mono-01-dsp/src/envelope.rs` has the same stall.
+  above sustain. mxm-mono-01's `crates/mxm-mono-01-dsp/src/envelope.rs` has the same stall.
 - **The portamento lag is carried as its remaining distance** (`glide_offset`), never as the value
   form (`a_glide_lands_exactly_on_its_note`).
 
@@ -75,8 +76,9 @@ in `src/` is a derived quantity or a test tolerance. None is a parameter.
 
 ## The chorus serves two products
 
-- Mono in, stereo out; it knows nothing about voices. `plugins/mxm-chorus-06` **depends on this
-  crate in place** and calls this module: no move or copy
+- Mono in, stereo out; it knows nothing about voices. mxm-chorus-06's `plugins/mxm-chorus-06`
+  **depends on this crate** — in place until the split, at a tag of this repository since
+  2026-10-06 — and calls this module: no move or copy
   ([NOTES.md § The chorus is a module](NOTES.md#the-chorus-is-a-module-with-a-plain-values-api-and-it-serves-two-products)).
 - **Depth, mix and noise are fixed in this instrument and are inputs in the module** (the owner,
   2026-09-03). `Chorus::set_mode` is the synth's whole interface and touches only the rate, without a

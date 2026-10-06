@@ -187,8 +187,8 @@ fn display(key: Leaf, min_width: f32, height: f32) -> Node<Leaf> {
 /// stands.
 ///
 /// **Routing belongs under the thing it affects**, never in a detached footer — design system §7.4
-/// and `plugins/mxm-mono-00/AGENTS.md`. The rows and the `‹ modulate ›` menu come from
-/// `mxm_modulation_params`, so every editor in the collection draws this the same way.
+/// and mxm-mono-00's `plugins/mxm-mono-00/AGENTS.md`. The rows and the `‹ modulate ›` menu come
+/// from `mxm_modulation_params`, so every editor in the collection draws this the same way.
 fn routes(ui: &Ui, params: &MxmPoly06Params, target: usize) -> Node<Leaf> {
     let size = mxm_modulation_params::ui::stack_size(
         ui,

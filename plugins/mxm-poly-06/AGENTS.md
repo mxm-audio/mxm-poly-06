@@ -14,9 +14,10 @@ rules, the editor contract — live in the parent and are not restated here. Thi
 
 # Ownership
 
-`Cargo.toml`, `LICENSE`, `README.md`, `BASELINE-M0.md`, `control-map.json`, `presets/`, and `src/` —
+`Cargo.toml`, `README.md`, `BASELINE-M0.md`, `control-map.json`, `presets/`, and `src/` —
 `lib.rs`, `params.rs`, `routes.rs`, `preset.rs`, `telemetry.rs`, and `editor.rs` with its
-`editor/{binding, sections, visuals}.rs`.
+`editor/{binding, sections, visuals}.rs`. There is no plugin `LICENSE`: the repository's root
+`LICENSE` (GPL-3.0-or-later) covers it.
 
 **`BASELINE-M0.md` is the routing conversion's reference**, produced by `lib.rs`'s `#[ignore]`d
 `baseline` module: a measurement seam, not a second `process()`
@@ -119,7 +120,7 @@ and was built under it. Reversing it changes the tail, the export and the golden
 
 ## Presets
 
-The preset system is `crates/mxm-preset`; `editor/binding.rs` re-exports `mxm_preset::binding`.
+The preset system is mxm-kit's `crates/mxm-preset`; `editor/binding.rs` re-exports `mxm_preset::binding`.
 Local: **fifty factory sounds** in `presets/`, generated from `FACTORY_DESIGN` in `preset.rs`'s test
 module (`write_the_factory_presets`, `#[ignore]`d); `the_factory_files_match_the_design_they_were_generated_from`
 catches a stale file. Init has no file ([NOTES.md § preset.rs](NOTES.md#presetrs-is-this-instruments-instrument-impl-and-its-factory-set)).
@@ -155,7 +156,7 @@ every routing pair present (`the_keyboard_cursor_reaches_and_operates_every_rout
 ## `editor`, `params`, `routes` and `telemetry` are public
 
 They are `pub` (with `Section`, `SECTIONS`, `title()` and the card grouping), permanently, so the
-layout lab draws **these real cards** rather than copies ([NOTES.md](NOTES.md#editor-params-routes-and-telemetry-are-public)).
+layout lab (`apps/mxm-layout-lab`, in the private archive) draws **these real cards** rather than copies ([NOTES.md](NOTES.md#editor-params-routes-and-telemetry-are-public)).
 
 ## Activation refuses a rate the DSP cannot hold
 
@@ -181,7 +182,8 @@ clap-validator validate "target/bundled/mxm-poly-06.clap"
 
 Run the debug bundle as well as release because `assert_process_allocs` is debug-only.
 
-Through the player: `behaviour.rs`, `golden_audio.rs` and `t7_editor.rs`. **Not signed off**: no
+Through the player: `host-tests`' `behaviour.rs` and `golden_audio.rs`, and `t7_editor.rs` (run in
+the mxm-player repository: `cargo test -p mxm-player --test t7_editor`). **Not signed off**: no
 real DAW, listening comparison, §12 trial or §15 QA gate by eye, so the editor is built, not done;
 fidelity is UNVERIFIED ([NOTES.md § Through the player](NOTES.md#through-the-player-and-what-was-not-run)).
 

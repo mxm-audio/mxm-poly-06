@@ -1,8 +1,9 @@
 //! The 80017A: an IR3109 four-pole OTA ladder, with the JUNO's external circuit around it.
 //!
-//! **The core is `crates/mxm-mono-01-dsp/src/filter.rs`, copied whole**: TPT one-poles in the style
-//! of Zavalishin's *The Art of VA Filter Design*, with a saturating resonance feedback path solved
-//! per sample by Newton iteration. The reasons that design won — the nonlinearity inside the loop,
+//! **The core is mxm-mono-01's `crates/mxm-mono-01-dsp/src/filter.rs`, copied whole**: TPT
+//! one-poles in the style of Zavalishin's *The Art of VA Filter Design*, with a saturating
+//! resonance feedback path solved per sample by Newton iteration. The reasons that design won — the
+//! nonlinearity inside the loop,
 //! the boundedness argument, the two cheaper designs measured and rejected — are in that file and
 //! in `research:filters/machines/ir3109-roland.md`, and are not restated. This crate does **not** depend
 //! on `mxm-mono-01-dsp`: the copy is the third honest one the collection's extraction rule asks for.

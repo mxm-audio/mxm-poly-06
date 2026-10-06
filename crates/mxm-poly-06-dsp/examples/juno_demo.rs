@@ -3,7 +3,7 @@
 //! Named for the machine, which is the collection's rule for examples: cargo writes every example in
 //! the workspace to one flat `target/*/examples/` directory, so two crates sharing a name share an
 //! output file — and cargo then runs whichever won the race, without a word. See
-//! `docs/known-issues.md`.
+//! mxm-kit's `docs/known-issues.md`.
 //!
 //! ```text
 //! cargo run -p mxm-poly-06-dsp --release --example juno_demo

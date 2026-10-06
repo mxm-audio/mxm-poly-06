@@ -27,10 +27,11 @@
 //!
 //! # Band limiting
 //!
-//! PolyBLEP residuals on every discontinuity, exactly as `crates/mxm-mono-01-dsp` does it, and for
-//! the same reason (`docs/oscillators/07-rust-recipes.md`): cheap, no tables, and quiet enough for an
-//! instrument whose character is in the filter and the chorus. The sub gets its own residual at the
-//! wraps where the flip-flop toggles — a divider without band limiting aliases exactly like a
+//! PolyBLEP residuals on every discontinuity, exactly as mxm-mono-01's `crates/mxm-mono-01-dsp`
+//! does it, and for the same reason (mxm-kit's `docs/oscillators/07-rust-recipes.md`): cheap, no
+//! tables, and quiet enough for an instrument whose character is in the filter and the chorus. The
+//! sub gets its own residual at the wraps where the flip-flop toggles — a divider without band
+//! limiting aliases exactly like a
 //! square wave without one.
 
 use crate::{Rng, flush};

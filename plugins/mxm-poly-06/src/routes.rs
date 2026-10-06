@@ -137,7 +137,8 @@ pub struct TargetRoutes {
 /// offer allows, which on this instrument is always both halves.
 ///
 /// Smoothed at this instrument's own 10 ms, the smoothing every depth slider it replaces had —
-/// `plugins/AGENTS.md`'s *smooth signals, not coefficients*. It reads as [`reach`] says.
+/// mxm-kit's `docs/plugin-conventions.md`, *Smooth signals, not coefficients*. It reads as
+/// [`reach`] says.
 fn amount(target: usize, source: usize) -> FloatParam {
     reading::amount_param(
         format!("{} from {}", TARGET_NAMES[target], SOURCE_NAMES[source]),
@@ -152,7 +153,7 @@ fn amount(target: usize, source: usize) -> FloatParam {
 /// a Key route. So the machine's own routes read, at full, the numbers their retired sliders meant:
 /// +7.00 st, +45 %, +7.00 and +3.00 oct, +1.00 oct/oct and +4.00 oct; and an added route reads the
 /// standard's reach, +12.00 st or +4.00 oct. A percentage of the amount would say nothing false and
-/// nothing useful (`docs/code-review-notes.md` §7, *what a route's amount reads*).
+/// nothing useful (mxm-kit's `docs/code-review-notes.md` §7, *what a route's amount reads*).
 fn reach(target: usize, source: usize) -> Reach {
     let unit = match target {
         target::PITCH => reading::SEMITONES,
@@ -263,7 +264,7 @@ impl TargetRoutes {
     /// pair was absent the parameter stayed editable — a host automating it, a preset load — which
     /// moves the *target* and leaves the smoother wherever the last live sample left it. Resuming
     /// would ramp the route in from a stale number over a span set by how long it was absent, which
-    /// is the host's buffer sizes deciding a sound (`docs/code-review-notes.md` §7).
+    /// is the host's buffer sizes deciding a sound (mxm-kit's `docs/code-review-notes.md` §7).
     pub fn arm(&self, newly_present: &[bool; SOURCES]) {
         for (source, &now) in newly_present.iter().enumerate() {
             if now {

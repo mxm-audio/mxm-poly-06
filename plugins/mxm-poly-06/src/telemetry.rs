@@ -205,8 +205,8 @@ mod tests {
 /// Nothing requested on a developer-channel slot.
 const NO_REQUEST: u8 = u8::MAX;
 
-/// The developer channel's requests of the editor — `plugins/AGENTS.md`, *A developer channel in
-/// every editor*. Each is taken once; the DSP reads nothing.
+/// The developer channel's requests of the editor — mxm-kit's `docs/plugin-conventions.md`, *A
+/// developer channel in every editor*. Each is taken once; the DSP reads nothing.
 impl Telemetry {
     /// Developer category address (0–5), or Parameters (127); never a derived tab index.
     pub fn request_view(&self, view: u8) {

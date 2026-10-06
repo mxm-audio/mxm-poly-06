@@ -32,7 +32,7 @@
 //! six and the first key's press becomes a tombstone, so releasing the second does not return to the
 //! first — unlike a conventional last-note-priority monosynth), and **the LFO delay restarts on the first key
 //! after every key was released**. Each is the usual polysynth answer and none is measured on a 106.
-//! The plugin's brief and this crate's AGENTS.md record them as chosen.
+//! The plugin's brief and this crate's NOTES.md record them as chosen.
 
 use crate::chorus::{Chorus, Mode};
 use crate::flush;

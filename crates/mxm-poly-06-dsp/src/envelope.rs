@@ -1,10 +1,10 @@
 //! Analog-style ADSR envelope.
 //!
-//! **A copy of `crates/mxm-mono-01-dsp/src/envelope.rs`, deliberately whole**, because the JUNO's
-//! envelope is the same kind of thing: one-pole exponential segments, an attack that aims past its
-//! target and switches when it crosses 1.0 — the snap a real ADSR has and a linear ramp lacks. It
-//! is the third honest copy the collection's extraction rule asks for, and this crate's AGENTS.md
-//! records it as one of the candidates that proved identical.
+//! **A copy of mxm-mono-01's `crates/mxm-mono-01-dsp/src/envelope.rs`, deliberately whole**,
+//! because the JUNO's envelope is the same kind of thing: one-pole exponential segments, an attack
+//! that aims past its target and switches when it crosses 1.0 — the snap a real ADSR has and a
+//! linear ramp lacks. It is the third honest copy the collection's extraction rule asks for, and
+//! this crate's NOTES.md records it as one of the candidates that proved identical.
 //!
 //! **One envelope per voice, shared by the filter and the amplifier.** That is the machine's
 //! defining constraint (`research:instruments/juno-106.md` §3.6): you cannot have a slow filter sweep

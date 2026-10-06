@@ -355,7 +355,7 @@ impl Graph {
     /// time something did — possibly from a different phrase. A backward route added to a sounding
     /// voice would read that ancient value for exactly one sample, and how ancient would depend on how
     /// the host split its buffers. Clearing the slot makes the first read a deterministic zero
-    /// (`crates/mxm-modulation/AGENTS.md`, *A gated publication owes a `clear`*).
+    /// (mxm-kit's `crates/mxm-modulation/AGENTS.md`, *A gated publication owes a `clear`*).
     pub fn set_topology(&mut self, routing: &Routing) {
         for (target, live) in self.live.iter_mut().enumerate() {
             live.build(&routing.present[target]);

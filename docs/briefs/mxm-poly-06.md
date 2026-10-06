@@ -120,7 +120,7 @@ caps and an orange wordmark, and this is none of those.
 
 **The plan records this as the owner's choice.** The candidates were measured and rose was taken so
 the editor could be built; the owner may pick another passing candidate, and the change is one
-constant in `crates/ui/src/theme.rs` and this table.
+constant in mxm-kit's `crates/ui/src/theme.rs` and this table.
 
 ## 8. Live visualizations
 

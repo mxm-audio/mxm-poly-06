@@ -67,7 +67,8 @@ the master volume, the output meter and a scale control (75–200%).
 on. The tests prove the model is self-consistent — not that it sounds like the machine. The listening
 comparison against reference recordings has not been run. The chorus's delay range, depth, noise
 level and I + II rate, the HPF's boost, the voice-steal policy and the LFO-delay retrigger are all
-**chosen, not measured**, and the DSP crate's `AGENTS.md` lists each.
+**chosen, not measured**, and the DSP crate's `NOTES.md` lists each (*What is chosen, not
+measured*, linked from its `AGENTS.md`).
 
 ## Building
 
@@ -76,4 +77,4 @@ cargo xtask bundle mxm-poly-06 --release
 clap-validator validate "target/bundled/mxm-poly-06.clap"
 ```
 
-MIT licensed — see [LICENSE](LICENSE). All code is original.
+GPL-3.0-or-later — see the repository's [`LICENSE`](../../LICENSE). All code is original.

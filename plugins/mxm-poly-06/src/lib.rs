@@ -45,8 +45,9 @@ pub const NAME: &str = plugin_name!();
 /// `plugin_name!` above: one line, one decision.
 pub const CLAP_ID: &str = concat!("dk.mxm.", plugin_name!());
 
-// Public for `apps/mxm-layout-lab` on the `dynamic-layout` branch: the lab draws these real
-// cards outside a host. Nothing else about them changes, and the shipped cdylib is unaffected.
+// Public for `apps/mxm-layout-lab` (in the private archive) on the `dynamic-layout` branch: the
+// lab draws these real cards outside a host. Nothing else about them changes, and the shipped
+// cdylib is unaffected.
 pub mod editor;
 pub mod params;
 pub mod preset;
@@ -947,8 +948,8 @@ mod developer_channel_tests {
 /// cargo test -p mxm-poly-06 --release baseline -- --ignored --nocapture
 /// ```
 ///
-/// **Release, and a quiet machine, or the throughput means nothing** (`docs/code-review-notes.md`
-/// §3). The digests are deterministic and care about neither.
+/// **Release, and a quiet machine, or the throughput means nothing** (mxm-kit's
+/// `docs/code-review-notes.md` §3). The digests are deterministic and care about neither.
 #[cfg(test)]
 mod baseline {
     use super::*;
@@ -971,8 +972,8 @@ mod baseline {
         ("mod_cutoff_key", 0.75),
     ];
 
-    /// What `activate` does, minus the host. Gotcha 13 in `docs/adding-an-instrument.md`: a
-    /// smoother reads zero until it is updated.
+    /// What `activate` does, minus the host. Gotcha 13 in mxm-kit's `docs/adding-an-instrument.md`:
+    /// a smoother reads zero until it is updated.
     fn plugin() -> MxmPoly06 {
         let mut plugin = MxmPoly06::default();
         activate_smoothers(&plugin);

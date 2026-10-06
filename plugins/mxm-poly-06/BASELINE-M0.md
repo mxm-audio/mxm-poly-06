@@ -15,7 +15,8 @@ cargo test -p mxm-poly-06 --release baseline -- --ignored --nocapture
 ## Throughput — not recorded at M0, deliberately
 
 The capture ran while `mxm-mono-02`'s conversion was building on the same machine, and **a timing
-taken on a machine that is also building is not a measurement** (`docs/code-review-notes.md` §3).
+taken on a machine that is also building is not a measurement** (mxm-kit's
+[`docs/code-review-notes.md`](https://github.com/mxm-audio/mxm-kit/blob/main/docs/code-review-notes.md) §3).
 So the pre-conversion figure is taken **from this commit, on a quiet machine, beside the
 post-conversion figure** — the same conditions for both, which is what a before/after gate needs.
 
@@ -33,6 +34,9 @@ FNV-1a over the raw sample bits, left and right interleaved — the digest
 `apps/mxm-player/tests/t4_golden_audio_poly_06.rs` already uses. A C-major triad (48, 52, 55) held
 1.5 s then released with 2.5 s of tail at 48 kHz, identical for every sound, so a digest change is
 attributable to the patch and not to the playing.
+
+*Since 2026-10-05:* that player test is this repository's
+[`host-tests/tests/golden_audio.rs`](host-tests/tests/golden_audio.rs), with the same FNV-1a digest.
 
 **Verified reproducible**: two consecutive runs produced identical digests for all 51 renders. Every
 preset applied **all 31 parameters** the instrument has at M0.
@@ -156,4 +160,6 @@ pass (plan P5), where the factory digests are re-pinned and not before.
 - **Nothing about how it sounds.** A digest proves *unchanged*; it cannot prove *good*.
 - **Nothing about the bundle or the host.** This is the plugin library, in process. The player's own
   golden (`apps/mxm-player/tests/t4_golden_audio_poly_06.rs`) covers the real bundle at its defaults
-  and with each chorus mode, and must not move.
+  and with each chorus mode, and must not move. *Since 2026-10-05* that golden is
+  [`host-tests/tests/golden_audio.rs`](host-tests/tests/golden_audio.rs) here, run with
+  `cargo test -p mxm-poly-06-host-tests` after a release bundle.

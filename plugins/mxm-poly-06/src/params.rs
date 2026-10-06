@@ -574,9 +574,9 @@ mod tests {
     /// reading that chooses its unit or its sign from the raw value can print one text, parse to the
     /// other side of its own switch and print another — which `clap-validator`'s
     /// `param-conversions` fails only when its values land in that sliver, so a clean run proves
-    /// nothing (`docs/code-review-notes.md` §6). This walks every parameter, with the unit on as the
-    /// host sees it, across clap-validator 0.4.1's own grid, the collection's `i / 19` grid, and
-    /// the normalised neighbours of every value in [`BOUNDARIES`].
+    /// nothing (mxm-kit's `docs/code-review-notes.md` §6). This walks every parameter, with the
+    /// unit on as the host sees it, across clap-validator 0.4.1's own grid, the collection's
+    /// `i / 19` grid, and the normalised neighbours of every value in [`BOUNDARIES`].
     #[test]
     fn every_parameter_text_is_idempotent_through_the_hosts_conversion() {
         let params = MxmPoly06Params::default();

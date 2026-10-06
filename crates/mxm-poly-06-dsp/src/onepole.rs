@@ -1,7 +1,8 @@
 //! One-pole TPT filter, the building block the HPF and the chorus's band-limiting share.
 //!
-//! `docs/filters/02-topologies.md` §2.1: the topology-preserving transform of an RC. Lowpass and
-//! highpass from one state, so a shelf is one filter and a highpass is `x - lowpass(x)`.
+//! mxm-kit's `docs/filters/02-topologies.md` §2.1: the topology-preserving transform of an RC.
+//! Lowpass and highpass from one state, so a shelf is one filter and a highpass is
+//! `x - lowpass(x)`.
 
 use crate::flush;
 

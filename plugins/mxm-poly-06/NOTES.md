@@ -165,7 +165,7 @@ every voice, which is a separate feature; honest is better than advertised-and-d
 `control-map.json` claims only roles the standard declared before this instrument. **`filter.hpf`,
 `filter_env.polarity` and `fx.chorus` are absent** — the chorus being the one a player would want —
 because an instrument map naming a role the player's compiled standard does not declare is refused
-whole (`docs/MXM_CONTROL_MAP.md` §9). The three roles exist in the standard now, appended into free
+whole (mxm-kit's [`docs/MXM_CONTROL_MAP.md`](https://github.com/mxm-audio/mxm-kit/blob/main/docs/MXM_CONTROL_MAP.md) §9). The three roles exist in the standard now, appended into free
 slots and onto a new Effects page; this file claims them once an unknown role is inert rather than
 fatal.
 
@@ -180,7 +180,7 @@ here for good**: the polarity is a route's sign.
 
 ## `preset.rs` is this instrument's `Instrument` impl and its factory set
 
-The preset system is `crates/mxm-preset` (since 2026-09-04): this file was the third copy, and with
+The preset system is mxm-kit's `crates/mxm-preset` (since 2026-09-04): this file was the third copy, and with
 three the extraction rule was met and the extraction made. `editor/binding.rs` re-exports
 `mxm_preset::binding`, the collection's one binding, since 2026-09-24; it was one of eighteen drifted
 copies. What is local: **fifty factory sounds** in `presets/`, each with its category, generated from
@@ -190,8 +190,9 @@ file.
 
 ## The editor, and its brief
 
-Carries the collection's **developer channel** (`plugins/AGENTS.md`, *A developer channel in every
-editor*): with `MXM_DEV_CC` in the process environment, CC 119 selects a category (0–5) or
+Carries the collection's **developer channel** (mxm-kit's
+[`docs/plugin-conventions.md`](https://github.com/mxm-audio/mxm-kit/blob/main/docs/plugin-conventions.md#a-developer-channel-in-every-editor),
+*A developer channel in every editor*; `plugins/AGENTS.md` holds its one-line contract): with `MXM_DEV_CC` in the process environment, CC 119 selects a category (0–5) or
 Parameters (127), as defined by the parent, CC 117 opens and closes the preset browser. CC 118 is
 consumed and changes nothing: nothing is disclosed since the Bender's two controls moved onto the
 Voice card (2026-09-28). CC 116 sets the theme by index — 0 light, 1 dark, 2 system — without saving
@@ -221,7 +222,7 @@ Oscillator card, Cutoff on the Filter card, Amplitude on the *Amplifier and chor
 (Cutoff ← Envelope)'s signed amount and draws none while that route is absent.
 
 **Every card is a `mxm_ui::tree`, and every floor is computed** (`plans/plan-layout-tree.md`;
-`crates/ui/AGENTS.md`, *A card body as data*). `sections::card` describes each of the six cards
+mxm-kit's [`crates/ui/AGENTS.md`](https://github.com/mxm-audio/mxm-kit/blob/main/crates/ui/AGENTS.md), *A card body as data*). `sections::card` describes each of the six cards
 once; `paging::editor::show` measures that tree for the card's floor and height, and
 `sections::paint` draws it leaf by leaf through the same bindings, so the controls, their gestures
 and their names are unchanged. `page_items` computes each floor every frame and passes it as the
@@ -252,14 +253,16 @@ The brief is [`docs/briefs/mxm-poly-06.md`](../../docs/briefs/mxm-poly-06.md).
 quarter-4K content and minimum sizes; component floor/row checks remain. **A row that mixes knobs
 and switches is top-aligned, and each switch names the knob it sits beside**, so the shared control
 lays it out on that knob's grid — label on the knob's name line, cells on its circle;
-`crates/ui/AGENTS.md` (*A control beside a knob sits on the knob's grid*) has the rule and the
+mxm-kit's [`crates/ui/AGENTS.md`](https://github.com/mxm-audio/mxm-kit/blob/main/crates/ui/AGENTS.md)
+(*A control beside a knob sits on the knob's grid*) has the rule, and its `NOTES.md` the
 measurement. Reported twice from screenshots of the Oscillator card; the first fix top-aligned the
 rows, which was necessary and not enough. `src/telemetry.rs` is the **only** DSP → editor channel.
 The editor is what raised this crate's MSRV to **1.95**; the DSP crate stays at 1.87.
 
 ## The keyboard coverage check reveals every route
 
-The parent's *The keyboard cursor runs in every editor* owns the contract; `REVEAL` does nothing,
+The parent's *Keyboard cursor* rule (in full: mxm-kit's `docs/plugin-conventions.md`, *The keyboard
+cursor runs in every editor*) owns the contract; `REVEAL` does nothing,
 since nothing is disclosed (the bend controls are on the Voice card). The app bar's Volume registers
 on every page, through its bar card. **And it runs in two frames**, as the governing plan's §8a
 asks: at defaults, and with every routing pair present, which is what paints every route's row
@@ -292,12 +295,13 @@ Through the player: `plugins/mxm-poly-06/host-tests/tests/behaviour.rs` measures
 rendered audio — the routing's headline gesture among it, (Cutoff ← Envelope) opening a closed
 filter over a chord, and (Amplitude ← LFO), a route the machine never had, making a tremolo —
 `plugins/mxm-poly-06/host-tests/tests/golden_audio.rs` hashes a fixed score — from day one, because
-`crates/mxm-mono-03-dsp/AGENTS.md` records what its absence cost — and `t7_editor.rs` asserts the
+mxm-mono-03's `crates/mxm-mono-03-dsp/NOTES.md` records what its absence cost — and the
+mxm-player repository's `apps/mxm-player/tests/t7_editor.rs` asserts the
 floating editor is advertised and, `#[ignore]`d because it opens a real window, that the editor
 opens, closes and **reopens** through the player's hosting path. That last one was run by hand on
 2026-09-02 and passed.
 
 **Not run:** a real DAW, a listening comparison against hardware, the brief's §12 trial, and the §15
 QA gate by eye at every zoom and in both themes — so the editor is **built, not signed off**;
-`docs/AGENTS.md` makes that gate the condition for calling an editor done. Fidelity is UNVERIFIED —
+mxm-kit's [`docs/AGENTS.md`](https://github.com/mxm-audio/mxm-kit/blob/main/docs/AGENTS.md) makes that gate the condition for calling an editor done. Fidelity is UNVERIFIED —
 see the DSP crate's doc.

@@ -1,9 +1,10 @@
 //! T4 for mxm-poly-06 — golden audio: a fixed score through the real application path.
 //!
-//! `plugins/mxm-mono-01/host-tests/tests/golden_audio.rs` covers mxm-mono-01 and records why a hash is the reference. This is the
-//! same test for the polysynth, added with the instrument rather than after it: `crates/
-//! mxm-mono-03-dsp/AGENTS.md` records that mono-03 shipped without one and that a DSP change there
-//! could move the sound while the whole suite stayed green.
+//! mxm-mono-01's `plugins/mxm-mono-01/host-tests/tests/golden_audio.rs` covers mxm-mono-01 and
+//! records why a hash is the reference. This is the same test for the polysynth, added with the
+//! instrument rather than after it: mxm-mono-03's `crates/mxm-mono-03-dsp/NOTES.md` records that
+//! mono-03 shipped without one and that a DSP change there could move the sound while the whole
+//! suite stayed green.
 //!
 //! # When this fails
 //!

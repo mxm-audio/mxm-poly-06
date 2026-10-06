@@ -2,8 +2,9 @@
 //!
 //! The format, the library on disk, favourites, the loaded identity and the app-bar controls are
 //! `mxm-preset`'s — one crate for every instrument and effect, extracted from the five verbatim
-//! copies this file used to be one of (`plugins/AGENTS.md`, *A preset is parameter values*). What
-//! is left here is what only this instrument knows: its id, its parameters, and its sounds.
+//! copies this file used to be one of (mxm-kit's `docs/plugin-conventions.md`, *A preset is
+//! parameter values*). What is left here is what only this instrument knows: its id, its
+//! parameters, and its sounds.
 
 use std::sync::RwLock;
 

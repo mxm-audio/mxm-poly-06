@@ -324,8 +324,8 @@ impl Voice {
     /// so the envelope counts while the crossfade is on its side and the gate counts while it is on
     /// the gate's. In GATE mode a long release is a hidden filter sweep behind a closed amplifier,
     /// and counting it kept the voice rendering and the plugin reporting a tail long after the
-    /// note had audibly ended — `plugins/AGENTS.md` says a tail reflects audible output. Found in
-    /// review.
+    /// note had audibly ended — mxm-kit's `docs/plugin-conventions.md` (*Realtime rules for
+    /// `process()`*) says a tail reflects audible output. Found in review.
     ///
     /// **And a held key always counts**, whatever the amplifier is doing this sample: a voice whose
     /// gate has not yet risen — the first sample of a note, or a GATE-mode voice re-triggered after
@@ -703,8 +703,8 @@ mod tests {
         // A new note a whole octave up, after this voice has been silent: it still slides.
         v.note_on(60, true, 0.8);
         let early = render(&mut v, &p, 2_400);
-        // 0.3 s is a time constant, not a duration (`docs/modulation/04`): three seconds is ten
-        // of them, and only then is the pitch where it is going.
+        // 0.3 s is a time constant, not a duration (mxm-kit's `docs/modulation/04`): three seconds
+        // is ten of them, and only then is the pitch where it is going.
         let late = render(&mut v, &p, (FS * 3.0) as usize);
         let hz_early = fundamental_hz(&early[400..]);
         let hz_late = fundamental_hz(&late[late.len() - 24_000..]);
