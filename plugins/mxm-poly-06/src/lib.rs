@@ -57,9 +57,26 @@ pub mod telemetry;
 use mxm_poly_06_dsp::dco::Mix;
 use mxm_poly_06_dsp::poly::{Key, Patch, Synth};
 use mxm_poly_06_dsp::voice::VoicePatch;
+use nice_plug::midi::{Channel, VoiceID};
 use nice_plug::prelude::*;
 use params::{MxmPoly06Params, VcaMode};
 use std::sync::Arc;
+
+/// A note's identity in the shape the voice logic was written for. nice-plug 0.4 types it
+/// (`VoiceID`, `Channel`, `Key`, each with a wildcard); 0.3 handed over a host's wildcard (-1) as
+/// 255 and a missing voice id as `None`. Converting here keeps every note decision, and every
+/// recorded render, exactly what it was before the upgrade.
+fn legacy_note(
+    voice_id: VoiceID,
+    channel: Channel,
+    key: nice_plug::midi::Key,
+) -> (Option<i32>, u8, u8) {
+    (
+        voice_id.id(),
+        channel.number().unwrap_or(u8::MAX),
+        key.number().unwrap_or(u8::MAX),
+    )
+}
 
 /// Upper bound on how many samples are rendered between event checks.
 ///
@@ -227,10 +244,11 @@ impl MxmPoly06 {
             NoteEvent::NoteOn {
                 voice_id,
                 channel,
-                note,
+                key,
                 velocity,
                 ..
             } => {
+                let (voice_id, channel, note) = legacy_note(voice_id, channel, key);
                 // Velocity zero is a note-off by convention. Otherwise velocity reaches the voices it
                 // lands on as a **routing source**: the machine's keyboard sent none, and nothing
                 // reads it unless a player routes it — decision 1.7's *expand the original*.
@@ -247,17 +265,23 @@ impl MxmPoly06 {
             NoteEvent::NoteOff {
                 voice_id,
                 channel,
-                note,
+                key,
                 ..
-            } => self.synth.note_off(Key { channel, note }, voice_id),
+            } => {
+                let (voice_id, channel, note) = legacy_note(voice_id, channel, key);
+                self.synth.note_off(Key { channel, note }, voice_id)
+            }
 
             // Immediate, no release — for the one note named.
             NoteEvent::Choke {
                 voice_id,
                 channel,
-                note,
+                key,
                 ..
-            } => self.synth.choke(Key { channel, note }, voice_id),
+            } => {
+                let (voice_id, channel, note) = legacy_note(voice_id, channel, key);
+                self.synth.choke(Key { channel, note }, voice_id)
+            }
 
             // **Per-note pitch, from the host's piano roll.** CLAP's tuning expression, in semitones,
             // routed by the ledger to the presses it names. A non-finite one is dropped here, and
@@ -265,10 +289,11 @@ impl MxmPoly06 {
             NoteEvent::PolyTuning {
                 voice_id,
                 channel,
-                note,
+                key,
                 tuning,
                 ..
             } if tuning.is_finite() => {
+                let (voice_id, channel, note) = legacy_note(voice_id, channel, key);
                 self.synth
                     .expression(Key { channel, note }, voice_id, tuning)
             }
@@ -656,14 +681,15 @@ mod init_patch {
 #[cfg(test)]
 mod events {
     use super::MxmPoly06;
+    use nice_plug::midi::{Channel, Key, VoiceID};
     use nice_plug::prelude::*;
 
     fn note_on(plugin: &mut MxmPoly06, note: u8, voice_id: Option<i32>) {
         plugin.handle_event(NoteEvent::NoteOn {
             timing: 0,
-            voice_id,
-            channel: 0,
-            note,
+            voice_id: voice_id.map_or(VoiceID::Wildcard, VoiceID::ID),
+            channel: Channel::Number(0),
+            key: Key::Number(note),
             velocity: 0.8,
         });
     }
@@ -671,9 +697,9 @@ mod events {
     fn note_off(plugin: &mut MxmPoly06, note: u8, voice_id: Option<i32>) {
         plugin.handle_event(NoteEvent::NoteOff {
             timing: 0,
-            voice_id,
-            channel: 0,
-            note,
+            voice_id: voice_id.map_or(VoiceID::Wildcard, VoiceID::ID),
+            channel: Channel::Number(0),
+            key: Key::Number(note),
             velocity: 0.0,
         });
     }
@@ -697,9 +723,9 @@ mod events {
         note_on(&mut plugin, 60, None);
         plugin.handle_event(NoteEvent::NoteOn {
             timing: 0,
-            voice_id: None,
-            channel: 0,
-            note: 60,
+            voice_id: VoiceID::Wildcard,
+            channel: Channel::Number(0),
+            key: Key::Number(60),
             velocity: 0.0,
         });
         assert_eq!(plugin.synth.held_voices(), 0);
@@ -821,9 +847,9 @@ mod events {
     fn a_tuning_expression_reaches_the_note_it_names_and_no_other() {
         let tuning = |voice_id: Option<i32>, note: u8| NoteEvent::PolyTuning {
             timing: 0,
-            voice_id,
-            channel: 0,
-            note,
+            voice_id: voice_id.map_or(VoiceID::Wildcard, VoiceID::ID),
+            channel: Channel::Number(0),
+            key: Key::Number(note),
             tuning: 7.0,
         };
         let setup = || {
@@ -860,9 +886,9 @@ mod events {
     fn a_non_finite_tuning_expression_is_dropped_and_the_pitch_stays_finite() {
         let tuning = |tuning: f32| NoteEvent::PolyTuning {
             timing: 0,
-            voice_id: Some(2),
-            channel: 0,
-            note: 64,
+            voice_id: VoiceID::ID(2),
+            channel: Channel::Number(0),
+            key: Key::Number(64),
             tuning,
         };
         let setup = || {
@@ -953,6 +979,7 @@ mod developer_channel_tests {
 #[cfg(test)]
 mod baseline {
     use super::*;
+    use nice_plug::midi::Key;
     use std::time::Instant;
 
     const FS: f32 = 48_000.0;
@@ -994,17 +1021,17 @@ mod baseline {
         plugin.handle_event(if on {
             NoteEvent::NoteOn {
                 timing: 0,
-                voice_id: None,
-                channel: 0,
-                note,
+                voice_id: VoiceID::Wildcard,
+                channel: Channel::Number(0),
+                key: Key::Number(note),
                 velocity: 0.8,
             }
         } else {
             NoteEvent::NoteOff {
                 timing: 0,
-                voice_id: None,
-                channel: 0,
-                note,
+                voice_id: VoiceID::Wildcard,
+                channel: Channel::Number(0),
+                key: Key::Number(note),
                 velocity: 0.0,
             }
         });
@@ -1187,6 +1214,7 @@ mod baseline {
 mod sample_rate_floor {
     use super::*;
     use mxm_poly_06_dsp::MIN_SAMPLE_RATE;
+    use nice_plug::midi::Key;
 
     struct Activation;
 
@@ -1236,9 +1264,9 @@ mod sample_rate_floor {
             assert_eq!(plugin.sample_rate, MIN_SAMPLE_RATE);
             plugin.handle_event(NoteEvent::NoteOn {
                 timing: 0,
-                voice_id: None,
-                channel: 0,
-                note: 48,
+                voice_id: VoiceID::Wildcard,
+                channel: Channel::Number(0),
+                key: Key::Number(48),
                 velocity: 0.8,
             });
             let out = render(&mut plugin, 4_000);
