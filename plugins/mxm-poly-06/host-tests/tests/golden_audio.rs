@@ -40,6 +40,12 @@ const PLUGIN: &str = "dk.mxm.mxm-poly-06";
 /// bit-invisible at the score's default patch. Still not listened to.
 const GOLDEN_DIGEST: &str = "ac2b14b5d74e399d";
 
+/// Whether this platform's render can match the pinned digests. They are Windows': each platform's
+/// maths library rounds in its own way, so the same score renders different bits on Linux and macOS.
+/// The owner pinned them on Windows only, where the sound was recorded and approved (2026-10-06);
+/// elsewhere every other check in these tests still runs.
+const DIGESTS_PINNED_HERE: bool = cfg!(target_os = "windows");
+
 /// The same score with the chorus **on**, one digest per mode.
 ///
 /// **Pinned 2026-09-04, before `mxm-chorus-06` was built.** The default-patch digest above cannot
@@ -137,14 +143,16 @@ fn the_score_still_sounds_the_same() {
     );
 
     let actual = digest(&samples);
-    assert_eq!(
-        actual,
-        GOLDEN_DIGEST,
-        "mxm-poly-06 renders differently through the player than the committed reference.\n\
-         If the change was deliberate, listen to {} and update GOLDEN_DIGEST to {actual} in the \
-         same commit as the change that caused it.",
-        wav.display()
-    );
+    if DIGESTS_PINNED_HERE {
+        assert_eq!(
+            actual,
+            GOLDEN_DIGEST,
+            "mxm-poly-06 renders differently through the player than the committed reference.\n\
+             If the change was deliberate, listen to {} and update GOLDEN_DIGEST to {actual} in the \
+             same commit as the change that caused it.",
+            wav.display()
+        );
+    }
 }
 
 #[test]
@@ -160,11 +168,13 @@ fn the_score_with_the_chorus_on_still_sounds_the_same() {
         };
         assert_eq!(samples.len(), GOLDEN_SAMPLES, "the score's length changed");
         let actual = digest(&samples);
-        assert_ne!(
-            actual, GOLDEN_DIGEST,
-            "chorus {mode} rendered the dry digest: the mode was not applied"
-        );
-        if &actual != expected {
+        if DIGESTS_PINNED_HERE {
+            assert_ne!(
+                actual, GOLDEN_DIGEST,
+                "chorus {mode} rendered the dry digest: the mode was not applied"
+            );
+        }
+        if DIGESTS_PINNED_HERE && &actual != expected {
             moved.push(format!("{mode}: {actual} (listen to {})", wav.display()));
         }
     }
@@ -201,12 +211,14 @@ fn the_golden_test_would_catch_a_change_in_the_sound() {
         });
     score(&mut session).expect("the session advances");
 
-    assert_ne!(
-        digest(&session.captured()),
-        GOLDEN_DIGEST,
-        "closing the filter must change the render; if it does not, the digest is not measuring \
-         the audio"
-    );
+    if DIGESTS_PINNED_HERE {
+        assert_ne!(
+            digest(&session.captured()),
+            GOLDEN_DIGEST,
+            "closing the filter must change the render; if it does not, the digest is not measuring \
+             the audio"
+        );
+    }
 }
 
 /// A stable digest of the rendered samples, on their exact bit patterns. FNV-1a, as mxm-mono-01's `golden_audio`.
