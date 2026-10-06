@@ -31,8 +31,8 @@ mxm-audio-file-decode = { git = "https://github.com/mxm-audio/mxm-kit", tag = "v
 mxm-measure = { git = "https://github.com/mxm-audio/mxm-kit", tag = "v0.3.1" }
 mxm-modulation = { git = "https://github.com/mxm-audio/mxm-kit", tag = "v0.3.1" }
 mxm-modulation-params = { git = "https://github.com/mxm-audio/mxm-kit", tag = "v0.3.1" }
-mxm-player = { git = "https://github.com/mxm-audio/mxm-player", tag = "v0.1.1" }
-mxm-player-harness = { git = "https://github.com/mxm-audio/mxm-player", tag = "v0.1.1" }
+mxm-player = { git = "https://github.com/mxm-audio/mxm-player", tag = "v0.1.2" }
+mxm-player-harness = { git = "https://github.com/mxm-audio/mxm-player", tag = "v0.1.2" }
 mxm-plugin-test = { git = "https://github.com/mxm-audio/mxm-kit", tag = "v0.3.1" }
 mxm-poly-06-dsp = { path = "crates/mxm-poly-06-dsp" }
 mxm-preset = { git = "https://github.com/mxm-audio/mxm-kit", tag = "v0.3.1" }
