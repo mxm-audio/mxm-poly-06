@@ -182,7 +182,7 @@ here for good**: the polarity is a route's sign.
 
 The preset system is mxm-kit's `crates/mxm-preset` (since 2026-09-04): this file was the third copy, and with
 three the extraction rule was met and the extraction made. `editor/binding.rs` re-exports
-`mxm_preset::binding`, the collection's one binding, since 2026-09-24; it was one of eighteen drifted
+`mxm_params::binding`, the collection's one binding, since 2026-09-24; it was one of eighteen drifted
 copies. What is local: **fifty factory sounds** in `presets/`, each with its category, generated from
 `FACTORY_DESIGN` in `preset.rs`'s test module (`write_the_factory_presets`, `#[ignore]`d;
 `the_factory_files_match_the_design_they_were_generated_from` catches a stale file). Init has no

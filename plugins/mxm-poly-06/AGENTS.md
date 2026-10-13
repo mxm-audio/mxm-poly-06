@@ -120,7 +120,7 @@ and was built under it. Reversing it changes the tail, the export and the golden
 
 ## Presets
 
-The preset system is mxm-kit's `crates/mxm-preset`; `editor/binding.rs` re-exports `mxm_preset::binding`.
+The preset system is mxm-kit's `crates/mxm-preset`; `editor/binding.rs` re-exports `mxm_params::binding`.
 Local: **fifty factory sounds** in `presets/`, generated from `FACTORY_DESIGN` in `preset.rs`'s test
 module (`write_the_factory_presets`, `#[ignore]`d); `the_factory_files_match_the_design_they_were_generated_from`
 catches a stale file. Init has no file ([NOTES.md § preset.rs](NOTES.md#presetrs-is-this-instruments-instrument-impl-and-its-factory-set)).

@@ -368,7 +368,7 @@ impl Routes {
 
     /// Every routing parameter, named by its permanent id, for the preset layer: **presets carry
     /// routing**, or a sound would load with somebody else's routes still in it.
-    pub fn parameters(&self) -> Vec<(&'static str, &dyn mxm_preset::ErasedParam)> {
+    pub fn parameters(&self) -> Vec<(&'static str, &dyn mxm_params::ErasedParam)> {
         let mut out = Vec::with_capacity(TARGETS * SOURCES * 2);
         for (index, (group, ids)) in self.each().into_iter().zip(ROUTE_IDS).enumerate() {
             for (route, (amount, presence)) in group.routes(index).into_iter().zip(ids) {
@@ -514,7 +514,7 @@ mod tests {
     /// assertion can see it.
     #[test]
     fn a_route_reads_what_its_pair_delivers_and_reads_back() {
-        use mxm_preset::ErasedParam;
+        use mxm_params::ErasedParam;
         let r = Routes::new();
         let cases: [(&FloatParam, f32, &str); 15] = [
             // The machine's own, at their sliders' reach.
@@ -558,7 +558,7 @@ mod tests {
     /// printed again, it is the same text — at amounts either side of zero, not only the round numbers.
     /// A plain signed format printed `-0 %` there, which parses to zero and prints `+0 %`, and
     /// `clap-validator`'s `param-conversions` fails on that whenever its random values land in the
-    /// sliver (`mxm_modulation_params::signed`).
+    /// sliver (`mxm_params::text::signed`).
     #[test]
     fn every_reading_survives_the_hosts_round_trip_a_rounded_zero_included() {
         let routes = Routes::new();

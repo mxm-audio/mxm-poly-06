@@ -39,12 +39,13 @@
 //! smoothed. Envelope times, portamento time, the LFO's rate and delay are not: they set
 //! state-machine behaviour, and smoothing them makes timing impossible to reason about.
 
+use mxm_params::text;
 use mxm_poly_06_dsp::chorus::Mode as ChorusModeDsp;
 use mxm_poly_06_dsp::dco::Range as RangeDsp;
 use mxm_poly_06_dsp::hpf::Position as HpfDsp;
 use mxm_poly_06_dsp::poly::Assign as AssignDsp;
 use nice_plug::prelude::*;
-use std::sync::{Arc, RwLock};
+use std::sync::RwLock;
 
 /// The DCO's range switch, in organ footage.
 #[derive(Enum, Debug, Clone, Copy, PartialEq, Eq)]
@@ -161,79 +162,12 @@ impl From<KeyAssign> for AssignDsp {
     }
 }
 
-/// Formats a parameter value for display.
-type ValueToString = Arc<dyn Fn(f32) -> String + Send + Sync>;
-/// Parses a typed-in value, returning `None` if it cannot be understood.
-type StringToValue = Arc<dyn Fn(&str) -> Option<f32> + Send + Sync>;
-
-/// Format seconds as whole milliseconds below a second, hundredths of a second from it — **the unit
-/// chosen from the rounded milliseconds, not the raw value.** Chosen from the raw value, 0.9995 s
-/// printed `1000 ms` and read back `1.00 s`, and where a range's inverse of one second lands just
-/// below it, `1.00 s` read back `1000 ms`.
-fn v2s_time() -> ValueToString {
-    Arc::new(|s| {
-        let ms = s * 1000.0;
-        if ms.round() >= 1000.0 {
-            format!("{s:.2} s")
-        } else {
-            format!("{ms:.0} ms")
-        }
-    })
-}
-
-/// Cutoff in tenths of a hertz, then kHz — `mxm-mono-pr1`'s reading, in place of
-/// `formatters::v2s_f32_hz_then_khz`, which chooses its unit from the raw value: 999.95 Hz printed
-/// `1000.0 Hz` and read back `1.0 kHz`. The `1.0 kHz` bucket reads in whole hertz, because 1000 Hz
-/// can preview just below the unit boundary after the normalised inverse.
-fn v2s_cutoff_hz_then_khz() -> ValueToString {
-    Arc::new(|value| {
-        let rounded_hz = value.round();
-        if (1_000.0..=1_050.0).contains(&rounded_hz) {
-            format!("{rounded_hz:.0} Hz")
-        } else if value < 1_000.0 {
-            format!("{value:.1} Hz")
-        } else {
-            format!("{:.1} kHz", value / 1_000.0)
-        }
-    })
-}
-
-fn s2v_time() -> StringToValue {
-    Arc::new(|text| {
-        let t = text.trim().to_lowercase();
-        let (number, scale) = if let Some(rest) = t.strip_suffix("ms") {
-            (rest, 0.001)
-        } else if let Some(rest) = t.strip_suffix('s') {
-            (rest, 1.0)
-        } else {
-            (t.as_str(), 0.001)
-        };
-        number.trim().parse::<f32>().ok().map(|v| v * scale)
-    })
-}
-
-/// Show a `0..=1` control as a percentage.
-fn v2s_percent() -> ValueToString {
-    Arc::new(|v| format!("{:.0} %", v * 100.0))
-}
-
-fn s2v_percent() -> StringToValue {
-    Arc::new(|text| {
-        text.trim()
-            .trim_end_matches('%')
-            .trim()
-            .parse::<f32>()
-            .ok()
-            .map(|v| v / 100.0)
-    })
-}
-
 /// A `0..=1` amount, smoothed, shown as a percentage.
 fn amount(name: &str, default: f32) -> FloatParam {
     FloatParam::new(name, default, FloatRange::Linear { min: 0.0, max: 1.0 })
         .with_smoother(SmoothingStyle::Linear(10.0))
-        .with_value_to_string(v2s_percent())
-        .with_string_to_value(s2v_percent())
+        .with_value_to_string(text::percent())
+        .with_string_to_value(text::parse_percent())
 }
 
 /// An envelope time: unsmoothed, formatted in ms or s. The hardware's ranges.
@@ -247,8 +181,8 @@ fn envelope_time(name: &str, default: f32, max: f32) -> FloatParam {
             factor: FloatRange::skew_factor(-2.0),
         },
     )
-    .with_value_to_string(v2s_time())
-    .with_string_to_value(s2v_time())
+    .with_value_to_string(text::milliseconds_then_seconds())
+    .with_string_to_value(text::parse_time())
 }
 
 /// **The LFO rate's tempo sync** (`plans/plan-tempo-sync-controls.md`): every LFO's ladder, 1/32 to
@@ -370,8 +304,8 @@ impl Default for MxmPoly06Params {
             .with_value_to_string(formatters::v2s_f32_rounded(2)),
             lfo_sync: BoolParam::new("LFO sync", false),
             lfo_delay: FloatParam::new("LFO delay", 0.0, FloatRange::Linear { min: 0.0, max: 3.0 })
-                .with_value_to_string(v2s_time())
-                .with_string_to_value(s2v_time()),
+                .with_value_to_string(text::milliseconds_then_seconds())
+                .with_string_to_value(text::parse_time()),
 
             // ---- DCO: one plain source sounds ----
             range: EnumParam::new("Range", Range::Eight),
@@ -384,8 +318,8 @@ impl Default for MxmPoly06Params {
                 },
             )
             .with_smoother(SmoothingStyle::Linear(10.0))
-            .with_value_to_string(v2s_percent())
-            .with_string_to_value(s2v_percent()),
+            .with_value_to_string(text::percent())
+            .with_string_to_value(text::parse_percent()),
             pulse: BoolParam::new("Pulse", false),
             saw: BoolParam::new("Saw", true),
             sub: amount("Sub", 0.0),
@@ -407,7 +341,7 @@ impl Default for MxmPoly06Params {
             .with_smoother(SmoothingStyle::Logarithmic(10.0))
             // No `with_unit`: this formatter carries its own, switching between Hz and kHz, and a
             // second one made the round trip read "1.0 kHz Hz" — which clap-validator caught.
-            .with_value_to_string(v2s_cutoff_hz_then_khz())
+            .with_value_to_string(text::cutoff_hertz())
             .with_string_to_value(formatters::s2v_f32_hz_then_khz()),
             resonance: amount("Resonance", 0.0),
 
@@ -432,8 +366,8 @@ impl Default for MxmPoly06Params {
             decay: envelope_time("Decay", 0.4, 12.0),
             sustain: FloatParam::new("Sustain", 0.8, FloatRange::Linear { min: 0.0, max: 1.0 })
                 .with_smoother(SmoothingStyle::Linear(20.0))
-                .with_value_to_string(v2s_percent())
-                .with_string_to_value(s2v_percent()),
+                .with_value_to_string(text::percent())
+                .with_string_to_value(text::parse_percent()),
             release: envelope_time("Release", 0.3, 12.0),
 
             // ---- CHORUS: off. It is the amount of an effect, and Init is the plain machine ----
@@ -451,8 +385,8 @@ impl Default for MxmPoly06Params {
                     factor: FloatRange::skew_factor(-1.5),
                 },
             )
-            .with_value_to_string(v2s_time())
-            .with_string_to_value(s2v_time()),
+            .with_value_to_string(text::milliseconds_then_seconds())
+            .with_string_to_value(text::parse_time()),
             key_assign: EnumParam::new("Key assign", KeyAssign::Poly1),
             volume: FloatParam::new(
                 "Volume",
@@ -569,59 +503,14 @@ mod tests {
         0.99425, 0.99426, 0.99427, 0.9999,
     ];
 
-    /// **Every parameter's text survives the host's own conversion.** The CLAP wrapper formats a
-    /// normalised value, parses the text back to a normalised value and formats that again, so a
-    /// reading that chooses its unit or its sign from the raw value can print one text, parse to the
-    /// other side of its own switch and print another — which `clap-validator`'s
-    /// `param-conversions` fails only when its values land in that sliver, so a clean run proves
-    /// nothing (mxm-kit's `docs/code-review-notes.md` §6). This walks every parameter, with the
-    /// unit on as the host sees it, across clap-validator 0.4.1's own grid, the collection's
-    /// `i / 19` grid, and the normalised neighbours of every value in [`BOUNDARIES`].
+    /// **Every parameter's text survives the host's round trip**, with the unit on, across the
+    /// collection's grids and switch points (`mxm_plugin_test::text_checks`), plus both sides of
+    /// every value in [`BOUNDARIES`].
     #[test]
-    fn every_parameter_text_is_idempotent_through_the_hosts_conversion() {
-        let params = MxmPoly06Params::default();
-        let map = params.param_map();
-        let validator_values = 4_000_usize.div_ceil(map.len()).clamp(5, 100);
-        let mut failures: Vec<String> = Vec::new();
-        for (id, ptr, _group) in &map {
-            // SAFETY: `params` owns every parameter these pointers refer to and outlives the loop;
-            // this is the same access `param-conversions` makes through CLAP.
-            unsafe {
-                // The wrapper hands CLAP `normalised × step count` and divides by it on the way in.
-                let steps = ptr.step_count().unwrap_or(1) as f64;
-                let from_clap = |value: f64| value as f32 / steps as f32;
-                let grid = (0..=19).map(|i| (i as f32 / 19.0, "grid"));
-                let validator = (0..validator_values).map(|i| {
-                    let value = steps * (i as f64 / (validator_values - 1) as f64);
-                    (from_clap(value), "validator grid")
-                });
-                let boundary = BOUNDARIES.into_iter().flat_map(|plain| {
-                    let at = ptr.preview_normalized(plain).clamp(0.0, 1.0);
-                    [at.next_down().max(0.0), at, at.next_up().min(1.0)].map(|n| (n, "boundary"))
-                });
-                for (value, from) in grid.chain(validator).chain(boundary) {
-                    let first = ptr.normalized_value_to_string(value, true);
-                    let second = ptr.string_to_normalized_value(&first).map(|parsed| {
-                        ptr.normalized_value_to_string(from_clap(parsed as f64 * steps), true)
-                    });
-                    if second.as_deref() != Some(first.as_str()) {
-                        let failure = format!("{id}: {first:?} reads back as {second:?}");
-                        if failures
-                            .last()
-                            .is_none_or(|last| !last.starts_with(&failure))
-                        {
-                            let plain = ptr.preview_plain(value);
-                            failures.push(format!("{failure} ({from}, plain {plain})"));
-                        }
-                    }
-                }
-            }
-        }
-        assert!(
-            failures.is_empty(),
-            "{} parameter texts changed through the host's conversion:\n{}",
-            failures.len(),
-            failures.join("\n")
+    fn every_parameter_text_survives_the_hosts_round_trip() {
+        mxm_plugin_test::text_checks::every_text_round_trips(
+            &MxmPoly06Params::default(),
+            &BOUNDARIES,
         );
     }
 }

@@ -12,9 +12,8 @@
 //! artifact it writes, decide whether the change was intended, and update the reference in the same
 //! commit as the change that caused it. A silent update is the one thing that makes this worthless.
 
-use mxm_player_harness::app_harness;
-
 use mxm_player::session::Session;
+use mxm_player_harness::host_test::digest;
 use std::path::PathBuf;
 
 const PLUGIN: &str = "dk.mxm.mxm-poly-06";
@@ -64,9 +63,7 @@ const CHORUS_DIGESTS: &[(&str, f64, &str)] = &[
 const GOLDEN_SAMPLES: usize = 60 * mxm_player::session::FRAMES_PER_BLOCK * 2;
 
 fn bundle() -> Option<(PathBuf, PathBuf)> {
-    let dir = app_harness::bundled_dir_with("mxm-poly-06")?;
-    let file = dir.join("mxm-poly-06.clap");
-    file.exists().then_some((dir, file))
+    mxm_player_harness::host_test::plugin_bundle("mxm-poly-06")
 }
 
 /// The score: a chord, a note joining it, a note leaving it, then all released. Fixed forever.
@@ -220,16 +217,4 @@ fn the_golden_test_would_catch_a_change_in_the_sound() {
              the audio"
         );
     }
-}
-
-/// A stable digest of the rendered samples, on their exact bit patterns. FNV-1a, as mxm-mono-01's `golden_audio`.
-fn digest(samples: &[f32]) -> String {
-    let mut hash: u64 = 0xcbf2_9ce4_8422_2325;
-    for s in samples {
-        for byte in s.to_bits().to_le_bytes() {
-            hash ^= u64::from(byte);
-            hash = hash.wrapping_mul(0x0000_0100_0000_01b3);
-        }
-    }
-    format!("{hash:016x}")
 }
