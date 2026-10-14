@@ -57,6 +57,7 @@
 //! [`DEPTH_MAX_MS`] bounds how far a standalone may open the depth, and sizes the delay line.
 
 use crate::onepole::OnePole;
+use mxm_dsp::delay::AgeLine;
 use mxm_dsp::guard::flush;
 use mxm_rng::Xorshift32;
 
@@ -198,42 +199,42 @@ impl Biquad {
 ///
 /// A BBD's delay changes continuously, so zero-order or linear interpolation would add artefacts
 /// of its own on top of the ones the circuit has. Catmull-Rom is the cheapest that does not.
-#[derive(Debug, Clone, Default)]
-struct DelayLine {
-    buf: Vec<f32>,
-    mask: usize,
-    write: usize,
+/// Storage and the age read are the collection's `mxm_dsp::delay::AgeLine`; the cubic read is this
+/// chorus's own. Age 1 is the sample just written.
+#[derive(Debug, Clone)]
+struct DelayLine(AgeLine);
+
+impl Default for DelayLine {
+    fn default() -> Self {
+        Self(AgeLine::new(0))
+    }
 }
 
 impl DelayLine {
     /// Allocates. Called from `set_sample_rate`, never from the audio path.
     fn allocate(&mut self, max_samples: usize) {
-        let len = (max_samples + 8).next_power_of_two();
-        self.buf = vec![0.0; len];
-        self.mask = len - 1;
-        self.write = 0;
+        self.0 = AgeLine::new((max_samples + 8).next_power_of_two());
     }
 
+    /// Silence until the line fills again, in constant time.
     fn clear(&mut self) {
-        self.buf.iter_mut().for_each(|s| *s = 0.0);
-        self.write = 0;
+        self.0.clear();
     }
 
     #[inline]
     fn push(&mut self, x: f32) {
-        self.buf[self.write] = x;
-        self.write = (self.write + 1) & self.mask;
+        self.0.push(x);
     }
 
     /// The sample `delay` samples ago, where `1.0` is the sample just written.
     #[inline]
     fn read(&self, delay: f32) -> f32 {
-        let max = (self.buf.len() - 4) as f32;
+        let max = (self.0.capacity() - 4) as f32;
         let d = delay.clamp(2.0, max);
         let i = d as usize;
         let frac = d - i as f32;
         // Older is further back: p1 is at `i`, p2 one older, p0 one newer, p3 two older.
-        let at = |k: usize| self.buf[(self.write.wrapping_sub(k)) & self.mask];
+        let at = |k: usize| self.0.read(k);
         let (p0, p1, p2, p3) = (at(i - 1), at(i), at(i + 1), at(i + 2));
         let c1 = 0.5 * (p2 - p0);
         let c2 = p0 - 2.5 * p1 + 2.0 * p2 - 0.5 * p3;

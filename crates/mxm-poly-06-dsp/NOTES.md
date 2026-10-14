@@ -69,6 +69,9 @@ it differs from the first sample.
   grew, which removed the damping term; the output hovered between 1e-20 and 5e-20 for ever. Two
   states of one recursion go to zero together (`chorus.rs`, `Biquad::process`). The mono crates have
   no biquad, so nothing to port — but the rule is general.
+- **The chorus's line stores its samples in `mxm-dsp`'s `AgeLine`** (the audit's O2, proved
+  bit-identical): its clear, a zero-fill before, is now constant-time and reads the same silence; the
+  Catmull-Rom read and its clamp to `2..len − 4` stay `chorus.rs`'s.
 - **The envelope's decay can stall one ulp above its sustain threshold in `f32`.** With decay 0.4 s
   and sustain 0.8 the per-sample step falls under half an ulp of the level, and the stage never
   reaches `Sustain`. Inaudible, and it left the stage wrong. Fixed here by also switching when the
