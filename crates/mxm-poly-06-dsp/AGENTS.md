@@ -164,7 +164,7 @@ cargo test -p mxm-poly-06-dsp
 cargo clippy -p mxm-poly-06-dsp --all-targets
 cargo run -p mxm-poly-06-dsp --release --example juno_demo   # four passes over four chords
 cargo +1.87.0 test -p mxm-poly-06-dsp                        # the MSRV this crate claims
-cargo tree -p mxm-poly-06-dsp -e normal                      # mxm-modulation and mxm-rng, nothing else
+cargo tree -p mxm-poly-06-dsp -e normal                      # mxm-modulation, mxm-rng and mxm-dsp, nothing else
 cargo tree -p mxm-poly-06 -e normal -f "{p} {f}"             # mxm-modulation with no features
 ```
 
