@@ -6,7 +6,8 @@
 //! nonlinearity inside the loop,
 //! the boundedness argument, the two cheaper designs measured and rejected — are in that file and
 //! in `research:filters/machines/ir3109-roland.md`, and are not restated. This crate does **not** depend
-//! on `mxm-mono-01-dsp`: the copy is the third honest one the collection's extraction rule asks for.
+//! on `mxm-mono-01-dsp`: the ladder is the third honest copy the collection's extraction rule asks
+//! for, and the saturator and prewarp it shared are `mxm-dsp`'s.
 //!
 //! # What is the JUNO's, and not the SH-101's
 //!
