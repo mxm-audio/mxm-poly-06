@@ -35,7 +35,6 @@ use mxm_ui::space::SPACE_5;
 use mxm_ui::theme::Tokens;
 use nice_plug::context::gui::GuiContext;
 use nice_plug::prelude::*;
-use nice_plug_egui::{EguiEditorState, NiceEguiApp, create_egui_editor};
 
 use crate::params::MxmPoly06Params;
 use crate::telemetry::Telemetry;
@@ -117,40 +116,21 @@ pub(crate) const BAR_PARAMETERS: &[&str] = &["volume"];
 
 /// Builds the editor. Called from `Plugin::editor`.
 pub fn create(params: Arc<MxmPoly06Params>, telemetry: Arc<Telemetry>) -> Option<MxmPoly06Editor> {
-    let state = EguiEditorState::from_size(
-        nice_plug::editor::dpi::LogicalSize::new(REFERENCE.0, REFERENCE.1),
-        1.0,
-    );
-
-    create_egui_editor(
-        state,
-        nice_plug_egui::RepaintNotifier::new(),
-        nice_plug_egui::EguiNiceSettings {
-            title: "mxm-poly-06".to_owned(),
-            // **A fixed window**, for the mono editors' reasons: the layout never reflows, so a
-            // window of any other size could only add empty space or clip. Scaling is the zoom
-            // control in the app bar, which egui-baseview turns into a window resize.
-            resize_hint: ResizeHint {
-                size_constraints: nice_plug::editor::SizeConstraints::min_logical_size(
-                    nice_plug::editor::dpi::LogicalSize::new(MINIMUM.0 as f32, MINIMUM.1 as f32),
-                ),
-                ..ResizeHint::RESIZABLE
-            },
-            ..Default::default()
-        },
+    mxm_editor::create(
+        "mxm-poly-06",
+        REFERENCE,
+        MINIMUM,
         MxmPoly06App::new(params, telemetry),
     )
 }
 
 /// The editor type the plugin exposes.
-pub type MxmPoly06Editor = nice_plug_egui::EguiEditor<MxmPoly06App>;
+pub type MxmPoly06Editor = mxm_editor::Editor<MxmPoly06App>;
 
 /// The editor's own state: what the plugin does not own and the host does not need.
 pub struct MxmPoly06App {
     params: Arc<MxmPoly06Params>,
     telemetry: Arc<Telemetry>,
-    /// Set in `build`, because that is where nice-plug hands it over.
-    gui_context: Option<GuiContext>,
     /// Musician pages (0), or the developer-only Parameters surface (127).
     view: usize,
     /// Open text-entry buffers, keyed by parameter id.
@@ -172,7 +152,6 @@ impl MxmPoly06App {
         Self {
             params,
             telemetry,
-            gui_context: None,
             view: 0,
             text_entry: HashMap::new(),
             presets: PresetUi::new(params_for_presets.as_ref()),
@@ -181,22 +160,8 @@ impl MxmPoly06App {
     }
 }
 
-impl NiceEguiApp for MxmPoly06App {
-    fn build(
-        &mut self,
-        egui_ctx: egui::Context,
-        nice_gui_ctx: GuiContext,
-        _frame: &mut nice_plug_egui::Frame,
-    ) -> Result<(), nice_plug_egui::baseview::HandlerError> {
-        mxm_ui::shell::install(&egui_ctx);
-        self.gui_context = Some(nice_gui_ctx);
-        Ok(())
-    }
-
-    fn ui(&mut self, ui: &mut Ui, _frame: &mut nice_plug_egui::Frame) {
-        let Some(gui_context) = self.gui_context.clone() else {
-            return;
-        };
+impl mxm_editor::Panel for MxmPoly06App {
+    fn ui(&mut self, ui: &mut Ui, gui_context: &GuiContext) {
         panel(
             ui,
             &self.params,
@@ -207,10 +172,6 @@ impl NiceEguiApp for MxmPoly06App {
             &mut self.presets,
             &mut self.nav,
         );
-    }
-
-    fn editor_closed(&mut self) {
-        self.gui_context = None;
     }
 }
 
