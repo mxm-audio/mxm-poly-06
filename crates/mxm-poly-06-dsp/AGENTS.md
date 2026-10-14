@@ -17,7 +17,7 @@ implementation record. Rationale, measurements and full test lists behind the ru
 
 # Ownership
 
-Owns `src/` (`lib.rs`, `dco.rs`, `filter.rs`, `envelope.rs`, `lfo.rs`, `onepole.rs`, `hpf.rs`,
+Owns `src/` (`lib.rs`, `dco.rs`, `filter.rs`, `lfo.rs`, `onepole.rs`, `hpf.rs`,
 `chorus.rs`, `voice.rs`, `poly.rs`, `routing.rs`, `conformance.rs`), `examples/` (`juno_demo.rs`;
 `common/wav.rs` retired to `mxm-measure`'s encoder), and `Cargo.toml`.
 
@@ -63,7 +63,7 @@ whole table; the regression-prone rules ([NOTES.md § The press ledger](NOTES.md
 - **Two states of one recursion go to zero together** (`chorus.rs`, `Biquad::process`), or a biquad
   limit-cycles at the flush threshold ([NOTES.md § Two reusable exact-silence rules](NOTES.md#two-reusable-exact-silence-rules)).
 - **The envelope switches stage when the step stopped moving the level**, or decay stalls one ulp
-  above sustain. mxm-mono-01's `crates/mxm-mono-01-dsp/src/envelope.rs` has the same stall.
+  above sustain: the fix this crate made, now in `mxm-dsp`'s ADSR. mxm-mono-01's own copy still stalls.
 - **The portamento lag is carried as its remaining distance** (`glide_offset`), never as the value
   form (`a_glide_lands_exactly_on_its_note`).
 
@@ -130,8 +130,8 @@ key down is exact silence; audio into cutoff stays bounded; every pair means wha
 
 ## Dependencies: two at runtime
 
-- **Two runtime dependencies, `mxm-modulation` and `mxm-rng`**, dependency-free at the same 1.87
-  floor; the MSRV rests on the shipped graph staying that small ([NOTES.md § Dependencies](NOTES.md#dependencies-two-at-runtime)).
+- **Three runtime dependencies, `mxm-modulation`, `mxm-rng` and `mxm-dsp`**, dependency-free at the
+  same 1.87 floor; the MSRV rests on the shipped graph staying that small ([NOTES.md § Dependencies](NOTES.md#dependencies-three-at-runtime)).
 - `[dev-dependencies]` only: `mxm-measure`, `mxm-audio-file`, `mxm-audio-file-decode` (MPL-2.0
   symphonia reaches tests only). **The `conformance` feature** compiles `conformance.rs` for the
   plugin's tests; only dev-dependencies enable it, so a shipped build has `mxm-modulation` featureless.

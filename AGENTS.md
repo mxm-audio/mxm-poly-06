@@ -142,7 +142,7 @@ breaks another is a broken change. CI builds and tests on all three when started
 
 | Crate | MSRV | Why |
 |---|---|---|
-| `crates/mxm-poly-06-dsp` | **1.87** | The whole polysynth, its chorus and its routing. **Two runtime dependencies**, `mxm-modulation` and `mxm-rng`, both dependency-free at this same floor — the routing conversion and the shared generators added them |
+| `crates/mxm-poly-06-dsp` | **1.87** | The whole polysynth, its chorus and its routing. **Three runtime dependencies**, `mxm-modulation`, `mxm-rng` and `mxm-dsp`, all dependency-free at this same floor — the routing conversion and the shared generators and primitives added them |
 | `plugins/mxm-poly-06` | **1.95** | Its editor pulls in egui |
 
 ## Licensing

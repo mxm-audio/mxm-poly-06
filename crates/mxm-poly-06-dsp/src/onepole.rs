@@ -4,21 +4,11 @@
 //! Lowpass and highpass from one state, so a shelf is one filter and a highpass is
 //! `x - lowpass(x)`.
 
-use crate::flush;
+use mxm_dsp::guard::flush;
+use mxm_dsp::shape::tan_approx;
 
 /// Cutoff ceiling as a fraction of the sample rate. `tan` blows up at Nyquist.
 const NYQUIST_FRACTION: f32 = 0.45;
-
-/// `tan(x)` via the [5/4] Pade approximant, for `x` in `[0, PI * 0.45]`.
-///
-/// The same approximant `filter.rs` uses, for the same reason: `f32::tan` is a libm call and the
-/// chorus recomputes nothing per sample, but the HPF and the voice filters do.
-#[inline]
-pub fn tan_approx(x: f64) -> f64 {
-    let x2 = x * x;
-    let x4 = x2 * x2;
-    x * (945.0 - 105.0 * x2 + x4) / (945.0 - 420.0 * x2 + 15.0 * x4)
-}
 
 /// Prewarped integrator gain for a cutoff.
 #[inline]

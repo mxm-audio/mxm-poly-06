@@ -72,8 +72,8 @@ it differs from the first sample.
 - **The envelope's decay can stall one ulp above its sustain threshold in `f32`.** With decay 0.4 s
   and sustain 0.8 the per-sample step falls under half an ulp of the level, and the stage never
   reaches `Sustain`. Inaudible, and it left the stage wrong. Fixed here by also switching when the
-  step stopped moving the level; **mxm-mono-01's `crates/mxm-mono-01-dsp/src/envelope.rs` has the same
-  stall.**
+  step stopped moving the level — the form `mxm-dsp`'s ADSR keeps; **mxm-mono-01's own copy still has
+  the stall.**
 - **The portamento lag is carried as its remaining distance**, `glide_offset`, by the same
   mechanism's lesson. `glide = note + (glide − note) × coef` stopped moving once the step was under
   half an ulp of the note, so after a glide the pitch rested short of the key until the next note —
@@ -90,10 +90,11 @@ Two tables and a list. The first table is every number **about the machine** tha
 not have, taken so the instrument could be built, and to be listened to in the fidelity gate. The
 second is this crate's own implementation constants: audible in principle, chosen for the model
 rather than the machine. The list after them names the constants **copied from `mxm-mono-01-dsp`
-unchanged**, which that crate's doc owns and this one does not re-argue: `envelope.rs`'s
-`ZERO_THRESHOLD`, `ATTACK_OVERSHOOT`, `ATTACK_TAUS`, `DECAY_TAUS` and `MIN_TIME_S`; `filter.rs`'s
+unchanged**, which that crate's doc owns and this one does not re-argue: the envelope's
+`ZERO_THRESHOLD`, `ATTACK_OVERSHOOT`, `ATTACK_TAUS`, `DECAY_TAUS` and `MIN_TIME_S` (now `mxm-dsp`'s); `filter.rs`'s
 `K_MAX`, `EXCITATION_THRESHOLD`, `EXCITATION_LEVEL`, `CUTOFF_MIN_HZ`, `NEWTON_ITERATIONS` and
-`NYQUIST_FRACTION`; `dco.rs`'s `FREQ_MIN_HZ` and `NYQUIST_FRACTION`; and the two Padé approximants.
+`NYQUIST_FRACTION`; `dco.rs`'s `FREQ_MIN_HZ` and `NYQUIST_FRACTION`; and the two Padé approximants
+(now `mxm-dsp`'s).
 Everything else numeric in `src/` is a derived quantity or a test tolerance. None is a parameter.
 
 | Where | What | Chosen |
@@ -218,13 +219,15 @@ that at depth they compute the retired sliders' expressions to the bit, and
   once: an added pitch reach of seven semitones, a raw velocity, the key published before the lag,
   a note never released.
 
-## Dependencies: two at runtime
+## Dependencies: three at runtime
 
-**Two runtime dependencies, [`mxm-modulation`](https://github.com/mxm-audio/mxm-kit/blob/main/crates/mxm-modulation/AGENTS.md)
-and [`mxm-rng`](https://github.com/mxm-audio/mxm-kit/blob/main/crates/mxm-rng/AGENTS.md)**, which have
+**Three runtime dependencies, [`mxm-modulation`](https://github.com/mxm-audio/mxm-kit/blob/main/crates/mxm-modulation/AGENTS.md),
+[`mxm-rng`](https://github.com/mxm-audio/mxm-kit/blob/main/crates/mxm-rng/AGENTS.md) and
+[`mxm-dsp`](https://github.com/mxm-audio/mxm-kit/blob/main/crates/mxm-dsp/AGENTS.md)**, which have
 none of their own and hold this same 1.87 floor — the routing conversion added the first and the
-shared generators the second (the audit's O3), and the MSRV override still rests on the shipped graph
-staying that small. `cargo tree -p mxm-poly-06-dsp -e normal` shows those crates and nothing else;
+shared generators the second (the audit's O3) and the shared primitives the third (O1), and the MSRV
+override still rests on the shipped graph
+staying that small. `cargo tree -p mxm-poly-06-dsp -e normal` shows those three crates and nothing else;
 mxm-chorus-06's `plugins/mxm-chorus-06`, which depends on this crate (in place until the split, at a
 tag since 2026-10-06), inherits it.
 
@@ -266,11 +269,11 @@ does not authorize extraction.
 
 | Candidate | Standing against `mxm-mono-01-dsp` |
 |---|---|
-| `flush` | **Identical**, byte for byte |
+| `flush` | **Extracted**: `mxm-dsp`'s `guard::flush` (the audit's O1) |
 | `Rng` | **Extracted**: identical in eight crates, now `mxm-rng`'s `Xorshift32` (the audit's O3) |
-| PolyBLEP residual, `clamp_pulse_width` | **Identical** |
-| `tan_approx`, `tanh_approx` | **Identical** |
-| `Adsr` | Identical **except the stall fix above**, which mono-01 should take |
+| PolyBLEP residual, `clamp_pulse_width` | **Extracted**: `mxm-dsp`'s `blep` |
+| `tan_approx`, `tanh_approx` | **Extracted**: `mxm-dsp`'s `shape` |
+| `Adsr` | **Extracted** with mono-02's and para-07's identical copies: `mxm-dsp`'s `envelope`, with the stall fix above, which mono-01 should take |
 | The DC blocker | Identical in form; here on the voice sum rather than per voice |
 | The ladder core (TPT + Newton) | **The same equation with per-stage trims and input-side compensation added** — similar, not identical; the external circuit is exactly what the research says differs between machines |
 | `OnePole` | New here; mono-03's diode ladder has its own one-poles |
@@ -342,3 +345,13 @@ Linux and macOS are unverified — there is no CI (root *Windows, Linux and macO
 development machine is Windows. *Since the split (2026-10-06):* CI builds and tests Windows, macOS
 and Linux on `v*` release tags or when started by hand, and Linux is checked in WSL before a push
 (root `AGENTS.md`, *Verification*).
+
+## One envelope per voice, and its curves
+
+Each voice has one `mxm-dsp` ADSR (the audit's O1 moved it from the identical copy this crate carried),
+**shared by the filter and the amplifier**. That is the machine's defining constraint
+(`research:instruments/juno-106.md` §3.6): you cannot have a slow filter sweep under a percussive
+amplitude, and an implementation that quietly adds a second envelope is not a JUNO-106. **The
+segment curves are not the hardware's**, or rather nobody knows whether they are: the research
+records the 106's times and not its shapes, and names the curves the first thing worth measuring if a
+unit appears. Exponential is the analogue default and the honest guess.

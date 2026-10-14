@@ -32,8 +32,8 @@
 //! **The resonance is mapped past the measured threshold**, as `mxm-mono-01`'s is: the slider's top
 //! self-oscillates, which the hardware's does.
 
-use crate::flush;
-use crate::onepole::tan_approx;
+use mxm_dsp::guard::flush;
+use mxm_dsp::shape::{tan_approx, tanh_approx};
 use mxm_rng::Xorshift32;
 use std::f32::consts::PI;
 
@@ -80,20 +80,6 @@ const NYQUIST_FRACTION: f32 = 0.45;
 /// the resonant peak's transient overshoot. The input-side compensation sits *inside* the saturator
 /// and so cannot move this.
 pub const OUTPUT_BOUND: f32 = 1.0 + K_MAX + 2.5;
-
-/// `tanh(x)` via the [7/6] Pade approximant, with the input clamped.
-///
-/// Accurate to better than 1e-4 absolute over the clamped range. The input clamp is load-bearing:
-/// without it the rational form diverges for large `x`, which would break the boundedness argument.
-/// The output clamp guards the last ulp so `|tanh_approx(x)| <= 1` is exactly true in `f32`.
-#[inline]
-pub fn tanh_approx(x: f32) -> f32 {
-    let x = x.clamp(-4.0, 4.0);
-    let x2 = x * x;
-    let num = x * (135135.0 + x2 * (17325.0 + x2 * (378.0 + x2)));
-    let den = 135135.0 + x2 * (62370.0 + x2 * (3150.0 + x2 * 28.0));
-    (num / den).clamp(-1.0, 1.0)
-}
 
 /// A four-pole resonant lowpass ladder in the JUNO's arrangement.
 #[derive(Debug, Clone)]
@@ -277,24 +263,6 @@ mod tests {
             f.process(x, cutoff, resonance, fs)
         })
         .expect("a probe at a real frequency has a gain") as f32
-    }
-
-    #[test]
-    fn tanh_approx_is_bounded_and_monotonic() {
-        let mut prev = f32::NEG_INFINITY;
-        for i in -20_000..=20_000 {
-            let x = i as f32 / 1000.0;
-            let y = tanh_approx(x);
-            assert!(y.abs() <= 1.0, "tanh_approx({x}) = {y} exceeds 1");
-            assert!(y >= prev - 1e-6, "not monotonic at x={x}");
-            prev = y;
-        }
-        let mut worst = 0.0f32;
-        for i in 0..=400 {
-            let x = i as f32 / 100.0;
-            worst = worst.max((tanh_approx(x) - x.tanh()).abs());
-        }
-        assert!(worst < 1e-4, "worst deviation from tanh: {worst}");
     }
 
     #[test]

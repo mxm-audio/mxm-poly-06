@@ -35,11 +35,11 @@
 //! The plugin's brief and this crate's NOTES.md record them as chosen.
 
 use crate::chorus::{Chorus, Mode};
-use crate::flush;
 use crate::hpf::{Hpf, Position};
 use crate::lfo::Lfo;
 use crate::routing::Routing;
 use crate::voice::{VOICES, Voice, VoicePatch};
+use mxm_dsp::guard::flush;
 
 /// How many presses the ledger holds. A host cannot hold more keys than it has, but it can send
 /// note-ons with fresh ids for one key forever and never a note-off, so this is a bound with an
@@ -618,8 +618,8 @@ fn voices_in(mask: u8) -> impl Iterator<Item = usize> {
 mod tests {
     use super::*;
     use crate::dco::Mix;
-    use crate::envelope::Stage;
     use crate::routing::{SOURCES, TARGETS, source, target};
+    use mxm_dsp::envelope::Stage;
 
     const FS: f32 = 48_000.0;
 

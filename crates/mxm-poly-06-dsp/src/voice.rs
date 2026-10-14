@@ -44,10 +44,10 @@
 //! crossfade is a law no factor can express, which is the pilot's `vcasource` ruling.
 
 use crate::dco::{Dco, Mix, Range};
-use crate::envelope::{Adsr, Stage, ZERO_THRESHOLD};
 use crate::filter::Ladder;
-use crate::flush;
 use crate::routing::{Graph, Routing, source, target};
+use mxm_dsp::envelope::{Adsr, Stage, ZERO_THRESHOLD};
+use mxm_dsp::guard::flush;
 use mxm_modulation::standard;
 
 /// How many voices the instrument has. Not a parameter: seven notes steal.

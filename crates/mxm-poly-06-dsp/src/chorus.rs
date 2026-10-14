@@ -56,8 +56,8 @@
 //!
 //! [`DEPTH_MAX_MS`] bounds how far a standalone may open the depth, and sizes the delay line.
 
-use crate::flush;
 use crate::onepole::OnePole;
+use mxm_dsp::guard::flush;
 use mxm_rng::Xorshift32;
 
 /// The panel's two buttons, and both together.

@@ -22,17 +22,14 @@
 //! is the effect the machine shipped with, kept a module with a plain-values API so a standalone
 //! version is later a move rather than a rewrite.
 //!
-//! `flush` below is **the third honest copy** of mxm-mono-01's
-//! `crates/mxm-mono-01-dsp`'s, kept byte-identical on purpose (the noise generator, once a copy too,
-//! is `mxm-rng`'s `Xorshift32`): the collection extracts shared DSP
-//! from the evidence of copies that proved identical, and this crate's NOTES.md records which of
-//! its modules did.
+//! The collection extracts shared DSP from the evidence of copies that proved identical, and this
+//! crate's NOTES.md records which of its modules did: the generator is `mxm-rng`'s, and `flush`,
+//! the saturators, the PolyBLEP residual and the ADSR are `mxm-dsp`'s.
 
 pub mod chorus;
 #[cfg(any(test, feature = "conformance"))]
 pub mod conformance;
 pub mod dco;
-pub mod envelope;
 pub mod filter;
 pub mod hpf;
 pub mod lfo;
@@ -48,32 +45,3 @@ pub mod voice;
 /// clear of that, and no higher than the lowest rate clap-validator (1234.57 Hz) or the player's
 /// robustness sweeps (1 kHz) ask for.
 pub const MIN_SAMPLE_RATE: f32 = 1_000.0;
-
-/// Flush a recursive state toward zero before it can become denormal.
-///
-/// Denormal arithmetic can cost orders of magnitude more than normal arithmetic,
-/// which in a feedback filter shows up as a CPU spike exactly when a note decays
-/// into silence. We do this in the DSP rather than relying on a framework FTZ
-/// guard: the guard may be a no-op unless an opt-in feature is enabled, and
-/// flushing here is also what keeps digital silence *exactly* zero.
-///
-/// `1e-20` is far above the f32 denormal threshold (~1.18e-38) and about -400 dB,
-/// so nothing audible is lost.
-#[inline(always)]
-pub fn flush(x: f32) -> f32 {
-    if x.abs() < 1e-20 { 0.0 } else { x }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn flush_preserves_audible_values_and_kills_tiny_ones() {
-        assert_eq!(flush(0.0), 0.0);
-        assert_eq!(flush(1e-30), 0.0);
-        assert_eq!(flush(-1e-30), 0.0);
-        assert_eq!(flush(0.5), 0.5);
-        assert_eq!(flush(-1e-6), -1e-6);
-    }
-}
