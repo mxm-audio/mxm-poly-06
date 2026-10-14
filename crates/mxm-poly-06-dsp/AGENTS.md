@@ -128,7 +128,7 @@ read starts from silence (`Graph::set_topology` clears it); a voice from idle re
 every voice is armed with the topology, idle ones included; Amplitude routes scale and never add; no
 key down is exact silence; audio into cutoff stays bounded; every pair means what the standard says.
 
-## Dependencies: two at runtime
+## Dependencies: three at runtime
 
 - **Three runtime dependencies, `mxm-modulation`, `mxm-rng` and `mxm-dsp`**, dependency-free at the
   same 1.87 floor; the MSRV rests on the shipped graph staying that small ([NOTES.md § Dependencies](NOTES.md#dependencies-three-at-runtime)).
