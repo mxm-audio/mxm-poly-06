@@ -188,14 +188,7 @@ impl NiceEguiApp for MxmPoly06App {
         nice_gui_ctx: GuiContext,
         _frame: &mut nice_plug_egui::Frame,
     ) -> Result<(), nice_plug_egui::baseview::HandlerError> {
-        mxm_ui::theme::apply(&egui_ctx);
-        mxm_ui::typography::apply(&egui_ctx);
-        // Light by default, overridable with `MXM_EDITOR_THEME`. The reasoning, and why the
-        // default is not `System`, lives on `mxm_ui::theme::preference`.
-        egui_ctx.set_theme(mxm_ui::theme::preference());
-
-        // The keys of the keymap in use, in the folder newDAWn and every MXM editor share.
-        mxm_ui::navigation::use_shared_keymap(&egui_ctx);
+        mxm_ui::shell::install(&egui_ctx);
         self.gui_context = Some(nice_gui_ctx);
         Ok(())
     }
@@ -267,25 +260,17 @@ pub fn panel(
     }
     // A theme, by index. Applied and not stored: this channel is how a screenshot run and a test
     // reach a state, and neither should overwrite the choice made in the control.
-    if let Some(index) = telemetry.dev.take_theme()
-        && let Some(preference) = mxm_ui::theme::from_index(index)
-    {
-        ui.ctx().set_theme(preference);
-    }
+    mxm_ui::shell::developer_theme(ui.ctx(), &telemetry.dev);
     // Nothing is disclosed since the Bender's controls moved onto the Voice card (2026-09-28): the
     // developer channel's CC 118 is consumed and changes nothing, as in mxm-mono-08.
     let _ = telemetry.dev.take_disclosure();
 
-    let peak = telemetry.meter.take();
-    let clipped = telemetry.meter.clipped();
     mxm_ui::AppBar::new("mxm-poly-06").show_with(
         ui,
         tokens,
         |ui| mxm_preset::ui::preset_row(ui, tokens, params, setter, presets),
         |ui| {
-            if mxm_ui::shell::level_meter(ui, tokens, peak, clipped) {
-                telemetry.meter.clear_clip();
-            }
+            mxm_ui::shell::peak_meter(ui, tokens, &telemetry.meter);
             // Design system §3.1 slot 6: the master output sits beside its meter. It is after the
             // chorus, so it is not the patch's Level, which stays on the Amplifier card.
             mxm_ui::navigation::bar_card(ui, VOLUME_CARD, |ui| {

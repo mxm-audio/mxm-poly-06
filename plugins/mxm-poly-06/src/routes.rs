@@ -141,7 +141,7 @@ pub struct TargetRoutes {
 /// [`reach`] says.
 fn amount(target: usize, source: usize) -> FloatParam {
     reading::amount_param(
-        format!("{} from {}", TARGET_NAMES[target], SOURCE_NAMES[source]),
+        mxm_modulation_params::reading::amount_name(TARGET_NAMES[target], SOURCE_NAMES[source]),
         reach(target, source),
         Fader::for_offer(offer(target, source), false),
         10.0,
@@ -171,7 +171,10 @@ fn reach(target: usize, source: usize) -> Reach {
 /// Whether a route exists. **Configuration, not an amount**, so its default is the machine's own
 /// wiring: the six paths the JUNO itself has are present in the init patch, everything else absent.
 fn present(target: &str, source: &str, wired: bool) -> BoolParam {
-    BoolParam::new(format!("{target} from {source} on"), wired)
+    BoolParam::new(
+        mxm_modulation_params::reading::presence_name(target, source),
+        wired,
+    )
 }
 
 impl TargetRoutes {
