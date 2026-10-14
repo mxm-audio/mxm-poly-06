@@ -34,7 +34,8 @@
 //! limiting aliases exactly like a
 //! square wave without one.
 
-use crate::{Rng, flush};
+use crate::flush;
+use mxm_rng::Xorshift32;
 
 /// Lowest frequency the oscillator will produce.
 const FREQ_MIN_HZ: f32 = 8.0;
@@ -150,7 +151,7 @@ pub struct Dco {
     /// The flip-flop. Toggles at every reset, so it is a square exactly one octave down and in fixed
     /// phase with the ramp.
     sub_state: f32,
-    noise: Rng,
+    noise: Xorshift32,
     /// What each source produced on the last call to [`Dco::process`]. State a backward route
     /// reads, so `reset` clears it with everything else.
     last: Parts,
@@ -169,7 +170,7 @@ impl Dco {
             phase: 0.0,
             inc: 0.0,
             sub_state: -1.0,
-            noise: Rng::new(0x0517_0600 ^ voice.wrapping_mul(0x9E37_79B9)),
+            noise: Xorshift32::new(0x0517_0600 ^ voice.wrapping_mul(0x9E37_79B9)),
             last: Parts::silent(),
         }
     }
@@ -208,7 +209,7 @@ impl Dco {
         let s = self.sub_state;
         let sub = s + if t < dt { s } else { -s } * poly_blep(t, dt);
 
-        let noise = self.noise.next_bipolar();
+        let noise = self.noise.bipolar_f32();
 
         self.phase += self.inc;
         if self.phase >= 1.0 {

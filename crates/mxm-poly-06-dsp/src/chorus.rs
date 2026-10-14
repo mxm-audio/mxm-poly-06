@@ -56,8 +56,9 @@
 //!
 //! [`DEPTH_MAX_MS`] bounds how far a standalone may open the depth, and sizes the delay line.
 
+use crate::flush;
 use crate::onepole::OnePole;
-use crate::{Rng, flush};
+use mxm_rng::Xorshift32;
 
 /// The panel's two buttons, and both together.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
@@ -246,7 +247,7 @@ impl DelayLine {
 struct Channel {
     line: DelayLine,
     recon: [Biquad; 2],
-    noise: Rng,
+    noise: Xorshift32,
     seed: u32,
 }
 
@@ -255,7 +256,7 @@ impl Channel {
         Self {
             line: DelayLine::default(),
             recon: [Biquad::default(); 2],
-            noise: Rng::new(seed),
+            noise: Xorshift32::new(seed),
             seed,
         }
     }
@@ -270,7 +271,7 @@ impl Channel {
     fn reset(&mut self) {
         self.line.clear();
         self.recon.iter_mut().for_each(Biquad::reset);
-        self.noise = Rng::new(self.seed);
+        self.noise = Xorshift32::new(self.seed);
     }
 
     /// One sample through the bucket brigade and its reconstruction filter.
@@ -278,7 +279,7 @@ impl Channel {
     fn process(&mut self, pre: f32, noise_gain: f32, delay_samples: f32) -> f32 {
         // The noise enters where the chip is, so it is delayed, modulated and filtered like the
         // signal — which is the difference between the circuit's noise and an added hiss.
-        self.line.push(pre + noise_gain * self.noise.next_bipolar());
+        self.line.push(pre + noise_gain * self.noise.bipolar_f32());
         let wet = self.line.read(delay_samples);
         let first = self.recon[0].process(wet);
         self.recon[1].process(first)
@@ -659,8 +660,8 @@ mod tests {
     /// dry gain is exactly 1) has far less energy above 12 kHz than the input does.
     #[test]
     fn the_wet_path_is_band_limited_and_the_dry_is_not() {
-        let mut rng = Rng::new(42);
-        let input: Vec<f32> = (0..8192).map(|_| 0.5 * rng.next_bipolar()).collect();
+        let mut rng = Xorshift32::new(42);
+        let input: Vec<f32> = (0..8192).map(|_| 0.5 * rng.bipolar_f32()).collect();
         let mut c = Chorus::new();
         c.set_sample_rate(FS);
         c.set_mode(Mode::I);

@@ -218,12 +218,13 @@ that at depth they compute the retired sliders' expressions to the bit, and
   once: an added pitch reach of seven semitones, a raw velocity, the key published before the lag,
   a note never released.
 
-## Dependencies: one at runtime
+## Dependencies: two at runtime
 
-**One runtime dependency, [`mxm-modulation`](https://github.com/mxm-audio/mxm-kit/blob/main/crates/mxm-modulation/AGENTS.md)**,
-which has none of its own and holds this same 1.87 floor — the routing conversion added it, and the
-MSRV override still rests on the shipped graph staying that small.
-`cargo tree -p mxm-poly-06-dsp -e normal` shows that crate and nothing else;
+**Two runtime dependencies, [`mxm-modulation`](https://github.com/mxm-audio/mxm-kit/blob/main/crates/mxm-modulation/AGENTS.md)
+and [`mxm-rng`](https://github.com/mxm-audio/mxm-kit/blob/main/crates/mxm-rng/AGENTS.md)**, which have
+none of their own and hold this same 1.87 floor — the routing conversion added the first and the
+shared generators the second (the audit's O3), and the MSRV override still rests on the shipped graph
+staying that small. `cargo tree -p mxm-poly-06-dsp -e normal` shows those crates and nothing else;
 mxm-chorus-06's `plugins/mxm-chorus-06`, which depends on this crate (in place until the split, at a
 tag since 2026-10-06), inherits it.
 
@@ -265,7 +266,8 @@ does not authorize extraction.
 
 | Candidate | Standing against `mxm-mono-01-dsp` |
 |---|---|
-| `flush`, `Rng` | **Identical**, byte for byte |
+| `flush` | **Identical**, byte for byte |
+| `Rng` | **Extracted**: identical in eight crates, now `mxm-rng`'s `Xorshift32` (the audit's O3) |
 | PolyBLEP residual, `clamp_pulse_width` | **Identical** |
 | `tan_approx`, `tanh_approx` | **Identical** |
 | `Adsr` | Identical **except the stall fix above**, which mono-01 should take |

@@ -32,8 +32,9 @@
 //! **The resonance is mapped past the measured threshold**, as `mxm-mono-01`'s is: the slider's top
 //! self-oscillates, which the hardware's does.
 
+use crate::flush;
 use crate::onepole::tan_approx;
-use crate::{Rng, flush};
+use mxm_rng::Xorshift32;
 use std::f32::consts::PI;
 
 /// Resonance maps to `k` in `0..=K_MAX`. The measured oscillation threshold sits
@@ -104,7 +105,7 @@ pub struct Ladder {
     /// Per-stage multiplicative trim on the integrator gain — the capacitor tolerance.
     trim: [f32; 4],
     /// Deterministic excitation source for self-oscillation.
-    rng: Rng,
+    rng: Xorshift32,
     /// Its seed, so `reset` restores exactly the sequence a fresh instance has.
     seed: u32,
 }
@@ -124,9 +125,9 @@ impl Ladder {
     pub fn new(voice: u32) -> Self {
         let mut trim = [1.0; 4];
         if voice != 0 {
-            let mut rng = Rng::new(0x80017A ^ voice.wrapping_mul(0x9E37_79B9));
+            let mut rng = Xorshift32::new(0x80017A ^ voice.wrapping_mul(0x9E37_79B9));
             for t in trim.iter_mut() {
-                *t = 1.0 + CAPACITOR_SPREAD * rng.next_bipolar();
+                *t = 1.0 + CAPACITOR_SPREAD * rng.bipolar_f32();
             }
         }
         let seed = 0x5EED_0600 ^ voice;
@@ -134,7 +135,7 @@ impl Ladder {
             s: [0.0; 4],
             y_prev: 0.0,
             trim,
-            rng: Rng::new(seed),
+            rng: Xorshift32::new(seed),
             seed,
         }
     }
@@ -146,7 +147,7 @@ impl Ladder {
         self.y_prev = 0.0;
         // The voice's own seed, not a shared one: a reset that reseeded every card alike made
         // voices 1–5 differ from fresh instances and correlated their excitation. Found in review.
-        self.rng = Rng::new(self.seed);
+        self.rng = Xorshift32::new(self.seed);
     }
 
     /// Process one sample.
@@ -172,7 +173,7 @@ impl Ladder {
         // Deliberate excitation, not denormal protection, and gated so "no input, low resonance"
         // stays exactly zero.
         if resonance > EXCITATION_THRESHOLD {
-            u += EXCITATION_LEVEL * self.rng.next_bipolar();
+            u += EXCITATION_LEVEL * self.rng.bipolar_f32();
         }
 
         // Each TPT one-pole gives y = G*x + (1-G)*s. With per-stage trims the four G differ, so the

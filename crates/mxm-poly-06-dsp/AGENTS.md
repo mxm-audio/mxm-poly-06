@@ -128,10 +128,10 @@ read starts from silence (`Graph::set_topology` clears it); a voice from idle re
 every voice is armed with the topology, idle ones included; Amplitude routes scale and never add; no
 key down is exact silence; audio into cutoff stays bounded; every pair means what the standard says.
 
-## Dependencies: one at runtime
+## Dependencies: two at runtime
 
-- **One runtime dependency, `mxm-modulation`**, dependency-free at the same 1.87 floor; the MSRV
-  rests on the shipped graph staying that small ([NOTES.md § Dependencies](NOTES.md#dependencies-one-at-runtime)).
+- **Two runtime dependencies, `mxm-modulation` and `mxm-rng`**, dependency-free at the same 1.87
+  floor; the MSRV rests on the shipped graph staying that small ([NOTES.md § Dependencies](NOTES.md#dependencies-two-at-runtime)).
 - `[dev-dependencies]` only: `mxm-measure`, `mxm-audio-file`, `mxm-audio-file-decode` (MPL-2.0
   symphonia reaches tests only). **The `conformance` feature** compiles `conformance.rs` for the
   plugin's tests; only dev-dependencies enable it, so a shipped build has `mxm-modulation` featureless.

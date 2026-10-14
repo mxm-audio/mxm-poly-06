@@ -3,8 +3,8 @@ name = "mxm-poly-06-dsp"
 description = "DSP for mxm-poly-06, framework-free and unit-testable"
 version.workspace = true
 edition.workspace = true
-# One runtime dependency, itself dependency-free and at this same floor: the collection's shared
-# routing (`crates/mxm-modulation`). Genuinely portable, so it does NOT inherit the 1.95 GUI floor.
+# Two runtime dependencies, each dependency-free and at this same floor: the collection's shared
+# routing (`crates/mxm-modulation`) and generators (`crates/mxm-rng`). Genuinely portable, so it does NOT inherit the 1.95 GUI floor.
 # The dev-dependency below is not in the shipped graph.
 rust-version = "1.87"
 license.workspace = true
@@ -12,6 +12,7 @@ authors.workspace = true
 repository.workspace = true
 
 [dependencies]
+mxm-rng.workspace = true
 mxm-modulation.workspace = true
 
 [features]
