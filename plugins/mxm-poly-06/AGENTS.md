@@ -30,6 +30,7 @@ rules, the editor contract — live in the parent and are not restated here. Thi
 | What | Value |
 |---|---|
 | `CLAP_ID` | `dk.mxm.mxm-poly-06` — assembled from `plugin_name!` in `src/lib.rs`, **not** from `CARGO_PKG_NAME` |
+| `VST3_CLASS_ID` | `VST3_CLASS_ID` in `src/lib.rs`, the CLAP id's hash written out |
 | Parameter `#[id]`s | **LFO:** `lforate` `lfosync` `lfodelay` · **DCO:** `range` `pulsewidth` `pulse` `saw` `sub` `noise` · **HPF:** `hpf` · **VCF:** `cutoff` `resonance` · **VCA:** `level` `vcamode` · **ENV:** `attack` `decay` `sustain` `release` · **Chorus:** `chorus` · **Voice:** `portamento` `keyassign` `volume` · **Disclosed:** `bendrange` `lfomod` |
 | Routing `#[id]`s | `mod_<target>_<source>`, the amount, and `mod_<target>_<source>on`, the presence — targets `pitch` `width` `cutoff` `amp`, sources `key` `env` `lfo` `vel` `wheel` `press` `bend` `saw` `pulse` `sub` `noise`. Written out in `routes::ROUTE_IDS`, which `the_id_table_is_what_the_derive_actually_produces` holds to the derive |
 | Retired `#[id]`s | `dcolfo` `pwmdepth` `pwmmode` `envamount` `envpolarity` `vcflfo` `keytrack` `bendfilter` — never to be reused (`no_retired_id_reappears`) |

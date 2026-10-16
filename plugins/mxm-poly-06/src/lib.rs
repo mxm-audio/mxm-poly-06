@@ -535,12 +535,35 @@ impl ClapPlugin for MxmPoly06 {
     // so declaring it would promise a separate feature. Honest is better than advertised-and-dropped.
 }
 
+impl Vst3Plugin for MxmPoly06 {
+    /// Permanent, as `CLAP_ID` is: the CLAP id's hash written out, held to it by
+    /// `identity::the_vst3_class_id_is_the_clap_ids_hash`.
+    const VST3_CLASS_ID: [u8; 16] = [
+        0x8e, 0xfa, 0x97, 0xa0, 0x6b, 0x76, 0x98, 0x70, 0x6a, 0x26, 0x1d, 0xc5, 0x8d, 0x5b, 0x26,
+        0xb2,
+    ];
+    const VST3_SUBCATEGORIES: &'static [Vst3SubCategory] =
+        &[Vst3SubCategory::Instrument, Vst3SubCategory::Synth];
+}
+
 nice_export_clap!(MxmPoly06);
+nice_export_vst3!(MxmPoly06);
 
 /// The plugin's name, checked where it escapes this crate.
 #[cfg(test)]
 mod identity {
     use super::{CLAP_ID, NAME};
+    use mxm_plugin_test::formats;
+
+    #[test]
+    fn the_vst3_class_id_is_the_clap_ids_hash() {
+        formats::the_vst3_class_id_is_the_clap_ids_hash::<super::MxmPoly06>();
+    }
+
+    #[test]
+    fn the_vst3_categories_follow_the_clap_features() {
+        formats::the_vst3_categories_follow_the_clap_features::<super::MxmPoly06>();
+    }
 
     /// The id is built from the name, so it cannot drift from it.
     #[test]
