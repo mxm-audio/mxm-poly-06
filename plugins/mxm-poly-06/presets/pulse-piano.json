@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "plugin": "dk.mxm.mxm-poly-06",
-  "name": "Juno piano",
+  "name": "Pulse piano",
   "category": "keys",
   "_comment": "`v` is the value and is authoritative. `text` is this plugin's own formatting of it, kept so the file can be read, and is never loaded.",
   "params": {

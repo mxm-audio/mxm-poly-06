@@ -63,7 +63,7 @@ preset applied **all 31 parameters** the instrument has at M0.
 | `harpsichord` | `26e7c50a0b097a81` | 0.2749 |
 | `high-pad` | `ea0cf2d8407f8cdd` | 0.2559 |
 | `hollow-pad` | `5d5cdfccec072ed1` | 0.3351 |
-| `juno-piano` | `2d9e5f0fa58c4e6f` | 0.2064 |
+| `pulse-piano` | `2d9e5f0fa58c4e6f` | 0.2064 |
 | `music-box` | `ace5b7f98ba20161` | 0.3813 |
 | `noise-hat` | `d6ead752568713a5` | 0.0632 |
 | `noise-wash` | `aeb27df2b9824e1d` | 0.1935 |
@@ -118,7 +118,7 @@ The same `baseline` module on the converted tree, with `FACTORY_DESIGN` translat
 | `glass-pad` | `95c378224f88abd3` | `3c470c220ddb2b69` |
 | `harp` | `87959a8119c4110b` | `1bc2fee56fa6955c` |
 | `harpsichord` | `26e7c50a0b097a81` | `5dd1d5408ce3f64d` |
-| `juno-piano` | `2d9e5f0fa58c4e6f` | `b28e8052b51465ff` |
+| `pulse-piano` | `2d9e5f0fa58c4e6f` | `b28e8052b51465ff` |
 | `pad-strings` | `e8ec20e6a854ed1c` | `8a3fba8d0ddfa16b` |
 | `poly-lead` | `fc80ed3daf95e157` | `8abd348adeca098f` |
 | `pulse-bass` | `c60e99fcbff724ed` | `09bd4cac01af6cd1` |

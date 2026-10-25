@@ -76,7 +76,7 @@ pub const FACTORY_FILES: &[(&str, &str)] = &[
     ("Dark pad", include_str!("../presets/dark-pad.json")),
     ("Vibrato lead", include_str!("../presets/vibrato-lead.json")),
     ("Wide chords", include_str!("../presets/wide-chords.json")),
-    ("Juno piano", include_str!("../presets/juno-piano.json")),
+    ("Pulse piano", include_str!("../presets/pulse-piano.json")),
     (
         "Electric piano",
         include_str!("../presets/electric-piano.json"),
@@ -521,7 +521,7 @@ mod tests {
             ],
         ),
         (
-            "Juno piano",
+            "Pulse piano",
             Category::Keys,
             &[
                 ("pulse", 1.0),
