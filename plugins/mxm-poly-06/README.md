@@ -52,10 +52,11 @@ and breaks every host's tail handling. See the plugin's `AGENTS.md`.
 
 ## Presets
 
-Fifty factory sounds, compiled into the plugin — copy the `.clap` alone and the sounds travel with
-it. **Init is not a file**: it is generated from the parameter defaults, so it cannot be deleted and
-cannot drift from them. Your own presets are saved as readable JSON under the platform config
-directory, browsed from the same bar, and can be starred to sort first.
+Fifty factory sounds, installed with the plugin as files: `mxm-poly-06.presets/` beside the `.clap`,
+and inside the `.vst3`. Any CLAP host lists and loads them too. **Init is not a file**: it is
+generated from the parameter defaults, so it cannot be deleted and cannot drift from them. Your own
+presets are saved as readable JSON under the platform config directory, browsed from the same bar,
+and can be starred to sort first.
 
 ## Status
 

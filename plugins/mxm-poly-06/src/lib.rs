@@ -533,6 +533,13 @@ impl ClapPlugin for MxmPoly06 {
     // extension to `CLAP_POLY_MODULATION_CONFIG`, which advertises a host offsetting a *parameter*
     // for one voice. The routing added per-voice *sources*, not per-voice parameter destinations,
     // so declaring it would promise a separate feature. Honest is better than advertised-and-dropped.
+
+    // Its factory presets, for a host to list and load (`mxm_preset::clap`).
+    const CLAP_PRESETS: Option<ClapPresets> = Some(mxm_preset::clap::PRESETS);
+
+    fn preset_loader(&self) -> Option<Arc<dyn ClapPresetLoader>> {
+        Some(Arc::new(mxm_preset::clap::Loader(self.params.clone())))
+    }
 }
 
 impl Vst3Plugin for MxmPoly06 {
